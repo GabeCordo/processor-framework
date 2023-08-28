@@ -3,13 +3,12 @@ package processor
 import (
 	"errors"
 	"fmt"
-	provisioner2 "github.com/GabeCordo/mango-go/processor/components/provisioner"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango-go/processor/threads/http"
-	"github.com/GabeCordo/mango-go/processor/threads/provisioner"
-	"github.com/GabeCordo/mango/proxy"
-	"github.com/GabeCordo/mango/threads"
-	"github.com/GabeCordo/mango/utils"
+	provisioner2 "github.com/GabeCordo/keitt/processor/components/provisioner"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/keitt/processor/threads/http"
+	"github.com/GabeCordo/keitt/processor/threads/provisioner"
+	"github.com/GabeCordo/mango/api"
+	"github.com/GabeCordo/toolchain/logging"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,7 +22,7 @@ func New(cfg *Config) (*Processor, error) {
 	}
 	processor.Config = cfg
 
-	processor.Interrupt = make(chan threads.InterruptEvent, 1)
+	processor.Interrupt = make(chan common.InterruptEvent, 1)
 	processor.C1 = make(chan common.ProvisionerRequest, 10)
 	processor.C2 = make(chan common.ProvisionerResponse, 10)
 
@@ -32,7 +31,7 @@ func New(cfg *Config) (*Processor, error) {
 		Timeout: cfg.MaxWaitForResponse,
 		Net:     fmt.Sprintf("%s:%d", cfg.Net.Host, cfg.Net.Port),
 	}
-	httpLogger, err := utils.NewLogger(utils.HttpProcessor, &cfg.Debug)
+	httpLogger, err := logging.NewLogger(HttpProcessor.ToString(), &cfg.Debug)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +44,7 @@ func New(cfg *Config) (*Processor, error) {
 		Standalone: cfg.StandaloneMode,
 		Core:       cfg.Core,
 	}
-	provisionerLogger, err := utils.NewLogger(utils.Provisioner, &processor.Config.Debug)
+	provisionerLogger, err := logging.NewLogger(Provisioner.ToString(), &processor.Config.Debug)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +54,7 @@ func New(cfg *Config) (*Processor, error) {
 		return nil, err
 	}
 
-	processorLogger, err := utils.NewLogger(utils.Undefined, &processor.Config.Debug)
+	processorLogger, err := logging.NewLogger(Undefined.ToString(), &processor.Config.Debug)
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +66,13 @@ func New(cfg *Config) (*Processor, error) {
 func (processor *Processor) Run() {
 
 	if !processor.Config.StandaloneMode {
-		err := proxy.ConnectToCore(processor.Config.Core)
+		err := api.ConnectToCore(processor.Config.Core)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	processor.Logger.SetColour(utils.Purple)
+	processor.Logger.SetColour(logging.Purple)
 
 	if processor.Config.Debug {
 		if processor.Config.StandaloneMode {
@@ -102,17 +101,17 @@ func (processor *Processor) Run() {
 
 	select {
 	case <-sigs:
-		processor.Interrupt <- threads.Panic
+		processor.Interrupt <- common.Panic
 	case interrupt := <-processor.Interrupt:
 		switch interrupt {
-		case threads.Panic:
+		case common.Panic:
 			processor.Logger.Printf("[IO] %s\n", " encountered panic")
 		default: // shutdown
 			processor.Logger.Printf("[IO] %s\n", " shutting down")
 		}
 	}
 
-	processor.Logger.SetColour(utils.Red)
+	processor.Logger.SetColour(logging.Red)
 
 	processor.HttpThread.Teardown()
 	if processor.Config.Debug {

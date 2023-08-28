@@ -2,7 +2,7 @@ package http
 
 import (
 	"context"
-	"github.com/GabeCordo/mango/threads"
+	"github.com/GabeCordo/keitt/processor/threads/common"
 	"net/http"
 	"net/http/pprof"
 	"time"
@@ -42,7 +42,7 @@ func (thread *Thread) Start() {
 	go func(thread *Thread) {
 		err := http.ListenAndServe(thread.Config.Net, thread.mux)
 		if err != nil {
-			thread.Interrupt <- threads.Panic
+			thread.Interrupt <- common.Panic
 		}
 	}(thread)
 
@@ -68,6 +68,6 @@ func (thread *Thread) Teardown() {
 
 	err := thread.server.Shutdown(ctx)
 	if err != nil {
-		thread.Interrupt <- threads.Panic
+		thread.Interrupt <- common.Panic
 	}
 }

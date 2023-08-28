@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/mango-go/processor"
-	"github.com/GabeCordo/mango/core"
+	"github.com/GabeCordo/keitt/processor"
+	"github.com/GabeCordo/mango/core/threads/common"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -15,10 +15,10 @@ type DoctorCommand struct {
 func (cmd DoctorCommand) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
 	// TODO : verify the core folder is setup
-	if _, err := os.Stat(core.DefaultFrameworkFolder); err != nil {
-		fmt.Printf("[x] the core has not been initialized (%s)\n", core.DefaultFrameworkFolder)
+	if _, err := os.Stat(common.DefaultFrameworkFolder); err != nil {
+		fmt.Printf("[x] the core has not been initialized (%s)\n", common.DefaultFrameworkFolder)
 	} else {
-		fmt.Printf("[✓] the core has been initialized (%s)\n", core.DefaultFrameworkFolder)
+		fmt.Printf("[✓] the core has been initialized (%s)\n", common.DefaultFrameworkFolder)
 	}
 
 	if _, err := os.Stat(DefaultProcessorFolder); err != nil {

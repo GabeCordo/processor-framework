@@ -1,8 +1,8 @@
 package provisioner
 
 import (
-	"github.com/GabeCordo/mango-go/processor/components/supervisor"
-	"github.com/GabeCordo/mango/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/supervisor"
 	"sync"
 )
 

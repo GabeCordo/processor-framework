@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/mango-go/processor"
+	"github.com/GabeCordo/keitt/processor"
 	"gopkg.in/yaml.v3"
 	"os"
 )

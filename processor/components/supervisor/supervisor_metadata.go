@@ -2,7 +2,7 @@ package supervisor
 
 import (
 	"github.com/GabeCordo/fack"
-	"github.com/GabeCordo/mango/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
 	"sync"
 )
 

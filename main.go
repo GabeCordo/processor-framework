@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/mango-go/controllers"
+	"github.com/GabeCordo/keitt/controllers"
 )
 
 func main() {

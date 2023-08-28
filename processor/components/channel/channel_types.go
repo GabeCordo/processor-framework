@@ -1,7 +1,6 @@
 package channel
 
 import (
-	channel "github.com/GabeCordo/mango/components/channel"
 	"sync"
 	"time"
 )
@@ -37,7 +36,7 @@ type ManagedChannel struct {
 	Config ManagedChannelConfig
 
 	TotalProcessed int
-	Timestamps     map[uint64]channel.DataTimer
+	Timestamps     map[uint64]DataTimer
 
 	channel chan DataWrapper
 
@@ -51,4 +50,13 @@ type ManagedChannel struct {
 
 type OneWayManagedChannel struct {
 	channel *ManagedChannel
+}
+
+type DataTimer struct {
+	In  time.Time
+	Out time.Time
+}
+
+type OneWay interface {
+	Push(data any)
 }

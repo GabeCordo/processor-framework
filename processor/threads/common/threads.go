@@ -1,6 +1,13 @@
 package common
 
-import "github.com/GabeCordo/mango/components/cluster"
+import "github.com/GabeCordo/keitt/processor/components/cluster"
+
+type InterruptEvent uint8
+
+const (
+	Shutdown InterruptEvent = 0
+	Panic                   = 1
+)
 
 type ProvisionerConfig struct {
 	Debug string

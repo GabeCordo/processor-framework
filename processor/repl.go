@@ -4,9 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango/threads"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/toolchain/logging"
 	"math/rand"
 	"os"
 	"strings"
@@ -22,13 +21,13 @@ func (processor *Processor) repl() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Print(utils.Orange + "@" + utils.Green + "mango " + utils.Reset)
+		fmt.Print(logging.Orange + "@" + logging.Green + "mango " + logging.Reset)
 		input, _ := reader.ReadString('\n')
 		input = strings.Replace(input, "\n", "", -1)
 		if input == "help" {
 			processor.help()
 		} else if input == "stop" {
-			processor.Interrupt <- threads.Shutdown
+			processor.Interrupt <- common.Shutdown
 		} else {
 			module, cluster, metadata, err := processor.parseInput(input)
 			if err == nil {
@@ -41,7 +40,7 @@ func (processor *Processor) repl() {
 }
 
 func (processor *Processor) help() {
-	fmt.Printf("%s[module].[cluster] [key]:[value] [key]:[value] binding%s\n", utils.Gray, utils.Reset)
+	fmt.Printf("%s[module].[cluster] [key]:[value] [key]:[value] binding%s\n", logging.Gray, logging.Reset)
 }
 
 func (processor *Processor) parseInput(input string) (module, cluster string, metadata map[string]string, err error) {
@@ -84,7 +83,7 @@ func (processor *Processor) executeCluster(module, cluster string, metadata map[
 
 	metadataStr := formatMap(metadata)
 	fmt.Printf("%smodule: %s, cluster: %s metadata: %s%s\n",
-		utils.Gray, module, cluster, metadataStr, utils.Reset)
+		logging.Gray, module, cluster, metadataStr, logging.Reset)
 
 	request := common.ProvisionerRequest{
 		Action:   common.ProvisionerCreateSupervisor,

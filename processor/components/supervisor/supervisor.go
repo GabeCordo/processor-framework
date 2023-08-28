@@ -2,8 +2,8 @@ package supervisor
 
 import (
 	"fmt"
-	"github.com/GabeCordo/mango-go/processor/components/channel"
-	"github.com/GabeCordo/mango/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/channel"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
 	"log"
 	"time"
 )

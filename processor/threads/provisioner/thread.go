@@ -2,7 +2,7 @@ package provisioner
 
 import (
 	"errors"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
+	"github.com/GabeCordo/keitt/processor/threads/common"
 )
 
 func (thread *Thread) Setup() {

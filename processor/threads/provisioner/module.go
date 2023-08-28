@@ -2,10 +2,10 @@ package provisioner
 
 import (
 	"errors"
-	"github.com/GabeCordo/mango-go/processor/components/module"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango/proxy"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/components/helper"
+	"github.com/GabeCordo/keitt/processor/components/module"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/mango/api"
 )
 
 func (thread *Thread) ProcessAddModule(request *common.ProvisionerRequest) error {
@@ -39,13 +39,13 @@ func (thread *Thread) ProcessAddModule(request *common.ProvisionerRequest) error
 
 		clusterImplementation := clusterWrapper.GetClusterImplementation()
 
-		if helperImplementation, ok := (clusterImplementation).(utils.UsesHelper); ok {
-			helper, _ := utils.NewStandardHelper(moduleWrapper.Identifier, clusterWrapper.Identifier)
+		if helperImplementation, ok := (clusterImplementation).(helper.UsesHelper); ok {
+			helper, _ := helper.NewStandardHelper(moduleWrapper.Identifier, clusterWrapper.Identifier)
 			helperImplementation.SetHelper(helper)
 		}
 	}
 
-	err = proxy.CreateModule(thread.Config.Core, moduleInstance.Config)
+	err = api.CreateModule(thread.Config.Core, moduleInstance.Config)
 	return err
 }
 
@@ -102,7 +102,7 @@ func (thread *Thread) ProcessDeleteModule(request *common.ProvisionerRequest) er
 		thread.logger.Printf("locally the module (%s) was marked for deletion\n", request.Module)
 	}
 
-	err := proxy.DeleteModule(thread.Config.Core, request.Module)
+	err := api.DeleteModule(thread.Config.Core, request.Module)
 
 	if err != nil {
 		return errors.New("it's likely the core didn't delete the module")

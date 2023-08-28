@@ -1,7 +1,9 @@
 package controllers
 
-import "github.com/GabeCordo/mango/core"
+import (
+	"github.com/GabeCordo/mango/core/threads/common"
+)
 
-var DefaultProcessorFolder = core.DefaultFrameworkFolder + "go/"
+var DefaultProcessorFolder = common.DefaultFrameworkFolder + "go/"
 var DefaultProcessorConfig = DefaultProcessorFolder + "processor.etl.yaml"
 var DefaultModulesFolder = DefaultProcessorFolder + "modules/"

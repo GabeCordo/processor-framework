@@ -3,8 +3,8 @@ package provisioner
 import (
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/mango-go/processor/components/module"
-	"github.com/GabeCordo/mango/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/module"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -201,8 +201,8 @@ func (provisioner *Provisioner) InjectModule(implementation *module.Module) (*Mo
 
 		defaultConfig := &cluster.Config{
 			Identifier:                  export.Cluster,
-			OnLoad:                      export.Config.OnLoad,
-			OnCrash:                     export.Config.OnCrash,
+			OnLoad:                      cluster.OnLoad(export.Config.OnLoad),
+			OnCrash:                     cluster.OnCrash(export.Config.OnCrash),
 			StartWithNTransformClusters: export.Config.Static.TFunctions,
 			StartWithNLoadClusters:      export.Config.Static.LFunctions,
 			ETChannelThreshold:          export.Config.Dynamic.TFunction.Threshold,
@@ -211,7 +211,7 @@ func (provisioner *Provisioner) InjectModule(implementation *module.Module) (*Mo
 			TLChannelGrowthFactor:       export.Config.Dynamic.LFunction.GrowthFactor,
 		}
 
-		clusterWrapper, err := moduleWrapper.AddCluster(export.Cluster, export.Config.Mode, clusterImplementation, defaultConfig)
+		clusterWrapper, err := moduleWrapper.AddCluster(export.Cluster, cluster.EtlMode(export.Config.Mode), clusterImplementation, defaultConfig)
 		if err != nil {
 			continue
 		}

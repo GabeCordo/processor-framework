@@ -1,6 +1,6 @@
 package provisioner
 
-import "github.com/GabeCordo/mango-go/processor/components/provisioner"
+import "github.com/GabeCordo/keitt/processor/components/provisioner"
 
 var instance *provisioner.Provisioner
 

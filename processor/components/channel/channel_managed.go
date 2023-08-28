@@ -2,7 +2,6 @@ package channel
 
 import (
 	"fmt"
-	"github.com/GabeCordo/mango/components/channel"
 	"time"
 )
 
@@ -13,7 +12,7 @@ func NewManagedChannel(name string, threshold, growth int) *ManagedChannel {
 	mc.Config.Threshold = threshold
 	mc.Config.GrowthFactor = growth
 	mc.TotalProcessed = 0
-	mc.Timestamps = make(map[uint64]channel.DataTimer)
+	mc.Timestamps = make(map[uint64]DataTimer)
 	mc.channel = make(chan DataWrapper)
 	mc.ChannelFinished = false
 	mc.StopNewPushes = false
@@ -43,7 +42,7 @@ func (mc *ManagedChannel) Push(data DataWrapper) bool {
 	currentTime := time.Now()
 
 	mc.mutex.Lock()
-	mc.Timestamps[data.Id] = channel.DataTimer{In: currentTime}
+	mc.Timestamps[data.Id] = DataTimer{In: currentTime}
 	mc.mutex.Unlock()
 
 	mc.LastPush = currentTime

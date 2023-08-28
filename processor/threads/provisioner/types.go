@@ -2,9 +2,8 @@ package provisioner
 
 import (
 	"errors"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango/threads"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/toolchain/logging"
 	"sync"
 )
 
@@ -18,23 +17,23 @@ type Config struct {
 type Thread struct {
 	Config *Config
 
-	Interrupt chan<- threads.InterruptEvent // Upon completion or failure an interrupt can be raised
+	Interrupt chan<- common.InterruptEvent // Upon completion or failure an interrupt can be raised
 
 	C1 chan common.ProvisionerRequest    // Supervisor is receiving threads from the http_thread
 	C2 chan<- common.ProvisionerResponse // Supervisor is sending responses to the http_thread
-	
-	logger *utils.Logger
+
+	logger *logging.Logger
 
 	accepting   bool
 	listenersWg sync.WaitGroup
 	requestWg   sync.WaitGroup
 }
 
-func NewThread(cfg *Config, logger *utils.Logger, channels ...interface{}) (*Thread, error) {
+func NewThread(cfg *Config, logger *logging.Logger, channels ...interface{}) (*Thread, error) {
 	provisioner := new(Thread)
 	var ok bool
 
-	provisioner.Interrupt, ok = (channels[0]).(chan threads.InterruptEvent)
+	provisioner.Interrupt, ok = (channels[0]).(chan common.InterruptEvent)
 	if !ok {
 		return nil, errors.New("expected type 'chan InterruptEvent' in index 0")
 	}
@@ -57,7 +56,7 @@ func NewThread(cfg *Config, logger *utils.Logger, channels ...interface{}) (*Thr
 	}
 	provisioner.Config = cfg
 
-	provisioner.logger.SetColour(utils.Orange)
+	provisioner.logger.SetColour(logging.Orange)
 
 	return provisioner, nil
 }

@@ -1,13 +1,12 @@
 package common
 
 import (
-	"github.com/GabeCordo/mango/components/cluster"
-	"github.com/GabeCordo/mango/threads"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/toolchain/multithreaded"
 	"math/rand"
 )
 
-func RegisterModule(pipe chan<- ProvisionerRequest, responseTable *utils.ResponseTable,
+func RegisterModule(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
 	modulePath string, timeout float64) error {
 
 	request := ProvisionerRequest{
@@ -17,16 +16,16 @@ func RegisterModule(pipe chan<- ProvisionerRequest, responseTable *utils.Respons
 	}
 	pipe <- request
 
-	rsp, didTimeout := utils.SendAndWait(responseTable, request.Nonce, timeout)
+	rsp, didTimeout := multithreaded.SendAndWait(responseTable, request.Nonce, timeout)
 	if didTimeout {
-		return utils.NoResponseReceived
+		return multithreaded.NoResponseReceived
 	}
 
 	response := (rsp).(ProvisionerResponse)
 	return response.Error
 }
 
-func DeleteModule(pipe chan<- ProvisionerRequest, responseTable *utils.ResponseTable,
+func DeleteModule(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
 	moduleName string, timeout float64) error {
 
 	request := ProvisionerRequest{
@@ -36,16 +35,16 @@ func DeleteModule(pipe chan<- ProvisionerRequest, responseTable *utils.ResponseT
 	}
 	pipe <- request
 
-	data, didTimeout := utils.SendAndWait(responseTable, request.Nonce, timeout)
+	data, didTimeout := multithreaded.SendAndWait(responseTable, request.Nonce, timeout)
 	if didTimeout {
-		return utils.NoResponseReceived
+		return multithreaded.NoResponseReceived
 	}
 
 	response := (data).(ProvisionerResponse)
 	return response.Error
 }
 
-func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *utils.ResponseTable,
+func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
 	moduleName, clusterName string, meta map[string]string, cfg *cluster.Config, timeout float64) error {
 
 	// there is a possibility the user never passed an args value to the HTTP endpoint,
@@ -62,15 +61,15 @@ func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *utils.Re
 	}
 	pipe <- provisionerThreadRequest
 
-	data, didTimeout := utils.SendAndWait(responseTable, provisionerThreadRequest.Nonce, timeout)
+	data, didTimeout := multithreaded.SendAndWait(responseTable, provisionerThreadRequest.Nonce, timeout)
 	if didTimeout {
-		return utils.NoResponseReceived
+		return multithreaded.NoResponseReceived
 	}
 
 	provisionerResponse := (data).(ProvisionerResponse)
 	return provisionerResponse.Error
 }
 
-func ShutdownCore(pipe chan<- threads.InterruptEvent) {
-	pipe <- threads.Shutdown
+func ShutdownCore(pipe chan<- InterruptEvent) {
+	pipe <- Shutdown
 }

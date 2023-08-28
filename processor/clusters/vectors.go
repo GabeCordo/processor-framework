@@ -2,8 +2,9 @@ package clusters
 
 import (
 	"fmt"
-	"github.com/GabeCordo/mango/components/cluster"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/components/channel"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/helper"
 	"time"
 )
 
@@ -15,10 +16,10 @@ type Vector2D struct {
 // --
 
 type VectorCluster struct {
-	helper utils.Helper
+	helper helper.Helper
 }
 
-func (v *VectorCluster) SetHelper(helper utils.Helper) {
+func (v *VectorCluster) SetHelper(helper helper.Helper) {
 	v.helper = helper
 }
 
@@ -51,10 +52,10 @@ func (v *VectorCluster) LoadFunc(m cluster.M, in any) {
 // ---
 
 type VectorWaitCluster struct {
-	helper utils.Helper
+	helper helper.Helper
 }
 
-func (v *VectorWaitCluster) SetHelper(helper utils.Helper) {
+func (v *VectorWaitCluster) SetHelper(helper helper.Helper) {
 	v.helper = helper
 }
 

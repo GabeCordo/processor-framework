@@ -3,9 +3,9 @@ package http
 import (
 	"context"
 	"errors"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango/threads"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/toolchain/logging"
+	"github.com/GabeCordo/toolchain/multithreaded"
 	"net/http"
 	"sync"
 )
@@ -21,18 +21,18 @@ type Config struct {
 type Thread struct {
 	Config *Config
 
-	Interrupt chan<- threads.InterruptEvent // Upon completion or failure an interrupt can be raised
+	Interrupt chan<- common.InterruptEvent // Upon completion or failure an interrupt can be raised
 
 	C1 chan<- common.ProvisionerRequest  // Core is sending threads to the Database
 	C2 <-chan common.ProvisionerResponse // Core is receiving responses from the Database
 
-	ProvisionerResponseTable *utils.ResponseTable
+	ProvisionerResponseTable *multithreaded.ResponseTable
 
 	server    *http.Server
 	mux       *http.ServeMux
 	cancelCtx context.CancelFunc
 
-	logger *utils.Logger
+	logger *logging.Logger
 
 	accepting bool
 	counter   uint32
@@ -40,12 +40,12 @@ type Thread struct {
 	wg        sync.WaitGroup
 }
 
-func NewThread(cfg *Config, logger *utils.Logger, channels ...interface{}) (*Thread, error) {
+func NewThread(cfg *Config, logger *logging.Logger, channels ...interface{}) (*Thread, error) {
 	thread := new(Thread)
 
 	var ok bool
 
-	thread.Interrupt, ok = (channels[0]).(chan threads.InterruptEvent)
+	thread.Interrupt, ok = (channels[0]).(chan common.InterruptEvent)
 	if !ok {
 		return nil, errors.New("expected type 'chan InterruptEvent' in index 0")
 	}
@@ -73,9 +73,9 @@ func NewThread(cfg *Config, logger *utils.Logger, channels ...interface{}) (*Thr
 	}
 	thread.Config = cfg
 
-	thread.ProvisionerResponseTable = utils.NewResponseTable()
+	thread.ProvisionerResponseTable = multithreaded.NewResponseTable()
 
-	thread.logger.SetColour(utils.Green)
+	thread.logger.SetColour(logging.Green)
 
 	return thread, nil
 }

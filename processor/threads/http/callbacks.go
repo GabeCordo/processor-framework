@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/mango-go/processor/threads/common"
-	"github.com/GabeCordo/mango/components/cluster"
-	"github.com/GabeCordo/mango/core"
-	"github.com/GabeCordo/mango/utils"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/mango/core/interfaces/communication"
+	"github.com/GabeCordo/toolchain/multithreaded"
 	"net/http"
 	"time"
 )
@@ -39,13 +39,13 @@ func (thread *Thread) postModuleCallback(w http.ResponseWriter, r *http.Request)
 
 	err = common.RegisterModule(thread.C1, thread.ProvisionerResponseTable, request.ModulePath, thread.Config.Timeout)
 
-	if errors.Is(err, utils.NoResponseReceived) {
+	if errors.Is(err, multithreaded.NoResponseReceived) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if err != nil {
 		w.WriteHeader(http.StatusConflict)
 	}
 
-	response := core.Response{Success: err == nil}
+	response := communication.Response{Success: err == nil}
 	if err != nil {
 		response.Description = err.Error()
 	}
@@ -64,13 +64,13 @@ func (thread *Thread) deleteModuleCallback(w http.ResponseWriter, r *http.Reques
 
 	err = common.DeleteModule(thread.C1, thread.ProvisionerResponseTable, request.ModuleName, thread.Config.Timeout)
 
-	if errors.Is(err, utils.NoResponseReceived) {
+	if errors.Is(err, multithreaded.NoResponseReceived) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	response := core.Response{Success: err == nil}
+	response := communication.Response{Success: err == nil}
 	if err != nil {
 		response.Description = err.Error()
 	}
@@ -118,13 +118,13 @@ func (thread *Thread) postSupervisorCallback(w http.ResponseWriter, r *http.Requ
 	err = common.SupervisorProvision(thread.C1, thread.ProvisionerResponseTable,
 		request.Module, request.Cluster, request.Metadata, &request.Config, thread.Config.Timeout)
 
-	if errors.Is(err, utils.NoResponseReceived) {
+	if errors.Is(err, multithreaded.NoResponseReceived) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	response := core.Response{Success: err == nil}
+	response := communication.Response{Success: err == nil}
 	if err != nil {
 		response.Description = err.Error()
 	}
@@ -166,7 +166,7 @@ func (thread *Thread) postDebugCallback(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response := core.Response{Success: true}
+	response := communication.Response{Success: true}
 
 	if request.Action == "shutdown" {
 		common.ShutdownCore(thread.Interrupt)

@@ -1,7 +1,7 @@
 package module
 
 import (
-	"github.com/GabeCordo/mango/module"
+	"github.com/GabeCordo/mango/core/interfaces/module"
 	"plugin"
 )
 

@@ -2,15 +2,16 @@ package clusters
 
 import (
 	"fmt"
-	"github.com/GabeCordo/mango/components/channel"
-	"github.com/GabeCordo/mango/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/channel"
+	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/keitt/processor/components/helper"
 )
 
 type MetaDataCluster struct {
-	helper utils.Helper
+	helper helper.Helper
 }
 
-func (mdc *MetaDataCluster) SetHelper(helper utils.Helper) {
+func (mdc *MetaDataCluster) SetHelper(helper helper.Helper) {
 	mdc.helper = helper
 }
 

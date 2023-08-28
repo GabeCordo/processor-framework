@@ -1,11 +1,10 @@
 package channel
 
 import (
-	"github.com/GabeCordo/mango/components/channel"
 	"math/rand"
 )
 
-func NewOneWayManagedChannel(channel *ManagedChannel) (channel.OneWay, error) {
+func NewOneWayManagedChannel(channel *ManagedChannel) (OneWay, error) {
 
 	if channel == nil {
 		return nil, BadManagedChannelType{description: "ManagedChannel passed to NewONeWayManagedChannel was nil"}
