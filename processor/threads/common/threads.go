@@ -16,7 +16,8 @@ type ProvisionerConfig struct {
 type ProvisionerAction string
 
 const (
-	ProvisionerCreateModule     ProvisionerAction = "create"
+	ProvisionerGetModules       ProvisionerAction = "get"
+	ProvisionerCreateModule                       = "create"
 	ProvisionerDeleteModule                       = "delete"
 	ProvisionerCreateSupervisor                   = "provision"
 )
@@ -42,5 +43,6 @@ type ProvisionerRequest struct {
 type ProvisionerResponse struct {
 	Success bool
 	Error   error
+	Data    any
 	Nonce   uint32
 }

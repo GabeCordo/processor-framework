@@ -87,7 +87,7 @@ type JSONResponse struct {
 type SupervisorConfigJSONBody struct {
 	Module     string            `json:"module"`
 	Cluster    string            `json:"cluster"`
-	Config     cluster.Config    `json:"common"`
+	Config     cluster.Config    `json:"config"`
 	Supervisor uint64            `json:"id,omitempty"`
 	Metadata   map[string]string `json:"metadata,omitempty"`
 }
@@ -110,7 +110,7 @@ func (thread *Thread) postSupervisorCallback(w http.ResponseWriter, r *http.Requ
 
 	var request SupervisorConfigJSONBody
 	err := json.NewDecoder(r.Body).Decode(&request)
-	if (r.Method != "GET") && (err != nil) {
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

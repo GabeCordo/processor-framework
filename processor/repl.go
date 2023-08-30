@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/GabeCordo/keitt/processor/components/provisioner"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 	"github.com/GabeCordo/toolchain/logging"
+	"github.com/GabeCordo/toolchain/multithreaded"
 	"math/rand"
 	"os"
 	"strings"
@@ -21,11 +23,16 @@ func (processor *Processor) repl() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Print(logging.Orange + "@" + logging.Green + "mango " + logging.Reset)
+		fmt.Print(logging.Orange + "@" + logging.Green + "keitt " + logging.Reset)
+
 		input, _ := reader.ReadString('\n')
 		input = strings.Replace(input, "\n", "", -1)
-		if input == "help" {
+		if input == "" {
+			// do nothing
+		} else if input == "help" {
 			processor.help()
+		} else if input == "info" {
+			processor.info()
 		} else if input == "stop" {
 			processor.Interrupt <- common.Shutdown
 		} else {
@@ -41,6 +48,34 @@ func (processor *Processor) repl() {
 
 func (processor *Processor) help() {
 	fmt.Printf("%s[module].[cluster] [key]:[value] [key]:[value] binding%s\n", logging.Gray, logging.Reset)
+}
+
+func (processor *Processor) info() {
+
+	request := common.ProvisionerRequest{
+		Action: common.ProvisionerGetModules,
+		Nonce:  rand.Uint32(),
+	}
+	processor.C1 <- request
+
+	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.MaxWaitForResponse)
+
+	if didTimeout {
+		fmt.Println("failed to load attached modules")
+		return
+	}
+
+	response := (rsp).(common.ProvisionerResponse)
+	modules := (response.Data).([]*provisioner.ModuleWrapper)
+
+	for _, module := range modules {
+		fmt.Printf("├─ %s\n", module.Identifier)
+
+		for _, cluster := range module.GetClusters() {
+
+			fmt.Printf("|  ├─%s\n", cluster.Identifier)
+		}
+	}
 }
 
 func (processor *Processor) parseInput(input string) (module, cluster string, metadata map[string]string, err error) {

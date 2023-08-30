@@ -47,11 +47,11 @@ func (thread *Thread) Start() {
 	}(thread)
 
 	go func() {
-		for supervisorResponse := range thread.C2 {
+		for response := range thread.C2 {
 			if !thread.accepting {
 				break
 			}
-			thread.ProvisionerResponseTable.Write(supervisorResponse.Nonce, supervisorResponse)
+			thread.ProvisionerResponseTable.Write(response.Nonce, response)
 		}
 	}()
 

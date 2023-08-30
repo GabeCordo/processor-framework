@@ -53,6 +53,7 @@ func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithr
 		meta = make(map[string]string)
 	}
 	provisionerThreadRequest := ProvisionerRequest{
+		Action:   ProvisionerCreateSupervisor,
 		Module:   moduleName,
 		Cluster:  clusterName,
 		Metadata: meta,

@@ -1,72 +1,23 @@
 package processor
 
 import (
-	"errors"
-	"fmt"
 	provisioner2 "github.com/GabeCordo/keitt/processor/components/provisioner"
 	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/keitt/processor/threads/http"
 	"github.com/GabeCordo/keitt/processor/threads/provisioner"
 	"github.com/GabeCordo/mango/api"
+	processor_i "github.com/GabeCordo/mango/core/interfaces/processor"
 	"github.com/GabeCordo/toolchain/logging"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
-func New(cfg *Config) (*Processor, error) {
-	processor := new(Processor)
-
-	if cfg == nil {
-		panic(errors.New("the config passed to processor.New cannot be nil"))
-	}
-	processor.Config = cfg
-
-	processor.Interrupt = make(chan common.InterruptEvent, 1)
-	processor.C1 = make(chan common.ProvisionerRequest, 10)
-	processor.C2 = make(chan common.ProvisionerResponse, 10)
-
-	httpConfig := &http.Config{
-		Debug:   cfg.Debug,
-		Timeout: cfg.MaxWaitForResponse,
-		Net:     fmt.Sprintf("%s:%d", cfg.Net.Host, cfg.Net.Port),
-	}
-	httpLogger, err := logging.NewLogger(HttpProcessor.ToString(), &cfg.Debug)
-	if err != nil {
-		return nil, err
-	}
-	processor.HttpThread, err = http.NewThread(httpConfig, httpLogger,
-		processor.Interrupt, processor.C1, processor.C2)
-
-	provisionerConfig := &provisioner.Config{
-		Debug:      true,
-		Timeout:    cfg.MaxWaitForResponse,
-		Standalone: cfg.StandaloneMode,
-		Core:       cfg.Core,
-	}
-	provisionerLogger, err := logging.NewLogger(Provisioner.ToString(), &processor.Config.Debug)
-	if err != nil {
-		return nil, err
-	}
-	processor.Provisioner, err = provisioner.NewThread(provisionerConfig, provisionerLogger,
-		processor.Interrupt, processor.C1, processor.C2)
-	if err != nil {
-		return nil, err
-	}
-
-	processorLogger, err := logging.NewLogger(Undefined.ToString(), &processor.Config.Debug)
-	if err != nil {
-		return nil, err
-	}
-	processor.Logger = processorLogger
-
-	return processor, nil
-}
-
 func (processor *Processor) Run() {
 
+	cfg := &processor_i.Config{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
+
 	if !processor.Config.StandaloneMode {
-		err := api.ConnectToCore(processor.Config.Core)
+		err := api.ConnectToCore(processor.Config.Core, cfg)
 		if err != nil {
 			panic(err)
 		}
@@ -121,6 +72,13 @@ func (processor *Processor) Run() {
 	processor.Provisioner.Teardown()
 	if processor.Config.Debug {
 		processor.Logger.Println("provisioner thread shutdown")
+	}
+
+	if !processor.Config.StandaloneMode {
+		err := api.DisconnectFromCore(processor.Config.Core, cfg)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 

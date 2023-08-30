@@ -2,7 +2,9 @@ package provisioner
 
 import (
 	"errors"
+	"fmt"
 	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/mango/api"
 )
 
 func (thread *Thread) Setup() {
@@ -59,6 +61,13 @@ func (thread *Thread) Start() {
 				thread.ProcessProvisionRequest(request)
 			}
 		}
+	} else {
+
+		for _, moduleInst := range GetProvisionerInstance().GetModules() {
+
+			fmt.Println(thread.Config)
+			api.CreateModule(thread.Config.Core, &thread.Config.Processor, moduleInst.ToConfig())
+		}
 	}
 
 	thread.listenersWg.Wait()
@@ -72,9 +81,11 @@ func (thread *Thread) respond(response *common.ProvisionerResponse) {
 
 func (thread *Thread) processRequest(request *common.ProvisionerRequest) {
 
-	response := &common.ProvisionerResponse{Error: nil}
+	response := &common.ProvisionerResponse{Error: nil, Nonce: request.Nonce}
 
 	switch request.Action {
+	case common.ProvisionerGetModules:
+		response.Data = thread.ProcessGetModules(request)
 	case common.ProvisionerCreateSupervisor:
 		response.Error = thread.ProcessProvisionRequest(request)
 	case common.ProvisionerCreateModule:
@@ -83,6 +94,7 @@ func (thread *Thread) processRequest(request *common.ProvisionerRequest) {
 		response.Error = thread.ProcessDeleteModule(request)
 	default:
 		response.Error = errors.New("bad request")
+		thread.requestWg.Done()
 	}
 
 	response.Success = response.Error == nil

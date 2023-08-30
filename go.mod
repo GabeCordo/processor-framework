@@ -2,6 +2,8 @@ module github.com/GabeCordo/keitt
 
 go 1.20
 
+replace github.com/GabeCordo/mango => /Users/gabecordovado/go/src/etl
+
 require (
 	github.com/GabeCordo/commandline v0.1.7
 	github.com/GabeCordo/fack v0.1.4

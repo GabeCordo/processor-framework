@@ -3,6 +3,7 @@ package provisioner
 import (
 	"errors"
 	"github.com/GabeCordo/keitt/processor/threads/common"
+	processor_i "github.com/GabeCordo/mango/core/interfaces/processor"
 	"github.com/GabeCordo/toolchain/logging"
 	"sync"
 )
@@ -12,6 +13,7 @@ type Config struct {
 	Timeout    float64
 	Standalone bool
 	Core       string
+	Processor  processor_i.Config
 }
 
 type Thread struct {

@@ -4,9 +4,16 @@ import (
 	"errors"
 	"github.com/GabeCordo/keitt/processor/components/helper"
 	"github.com/GabeCordo/keitt/processor/components/module"
+	"github.com/GabeCordo/keitt/processor/components/provisioner"
 	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/mango/api"
 )
+
+func (thread *Thread) ProcessGetModules(request *common.ProvisionerRequest) []*provisioner.ModuleWrapper {
+
+	defer thread.requestWg.Done()
+
+	return GetProvisionerInstance().GetModules()
+}
 
 func (thread *Thread) ProcessAddModule(request *common.ProvisionerRequest) error {
 
@@ -45,7 +52,8 @@ func (thread *Thread) ProcessAddModule(request *common.ProvisionerRequest) error
 		}
 	}
 
-	err = api.CreateModule(thread.Config.Core, moduleInstance.Config)
+	// TODO : complete
+	//err = api.CreateModule(thread.Config.Core, moduleInstance.Config)
 	return err
 }
 
@@ -102,11 +110,12 @@ func (thread *Thread) ProcessDeleteModule(request *common.ProvisionerRequest) er
 		thread.logger.Printf("locally the module (%s) was marked for deletion\n", request.Module)
 	}
 
-	err := api.DeleteModule(thread.Config.Core, request.Module)
+	// TODO : complete
+	//err := api.DeleteModule(thread.Config.Core, request.Module)
 
-	if err != nil {
-		return errors.New("it's likely the core didn't delete the module")
-	}
+	//if err != nil {
+	//	return errors.New("it's likely the core didn't delete the module")
+	//}
 
 	return nil
 }

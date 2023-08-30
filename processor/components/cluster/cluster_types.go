@@ -67,6 +67,14 @@ type VerifiableTL interface {
 	VerifyTLFunction(in any) (valid bool)
 }
 
+// Test
+// TODO : needs to be implemented
+type Test interface {
+	MockExtractFunc(metadata M, c channel.OneWay)
+	VerifyTransformOutput(metadata M, in any) (success bool)
+	MockLoadFunc(metadata M, in any)
+}
+
 type Config struct {
 	Identifier                  string  `json:"identifier"`
 	OnLoad                      OnLoad  `json:"on-load"`
@@ -77,6 +85,23 @@ type Config struct {
 	ETChannelGrowthFactor       int     `json:"et-channel-growth-factor"`
 	TLChannelThreshold          int     `json:"tl-channel-threshold"`
 	TLChannelGrowthFactor       int     `json:"tl-channel-growth-factor"`
+}
+
+func (config Config) ToStandard() *cluster.Config {
+
+	dst := new(cluster.Config)
+
+	dst.Identifier = config.Identifier
+	dst.OnLoad = cluster.OnLoad(config.OnLoad)
+	dst.OnCrash = cluster.OnCrash(config.OnCrash)
+	dst.StartWithNTransformClusters = config.StartWithNTransformClusters
+	dst.StartWithNLoadClusters = config.StartWithNLoadClusters
+	dst.ETChannelThreshold = config.ETChannelThreshold
+	dst.ETChannelGrowthFactor = config.ETChannelGrowthFactor
+	dst.TLChannelThreshold = config.TLChannelThreshold
+	dst.TLChannelGrowthFactor = config.TLChannelGrowthFactor
+
+	return dst
 }
 
 type DataTiming struct {

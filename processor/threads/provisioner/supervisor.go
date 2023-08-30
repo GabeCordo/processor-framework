@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 	"github.com/GabeCordo/mango/api"
+	"github.com/GabeCordo/mango/core/components/supervisor"
 	"github.com/GabeCordo/toolchain/logging"
 	"time"
 )
@@ -58,7 +59,7 @@ func (thread *Thread) ProcessProvisionRequest(request *common.ProvisionerRequest
 		// TODO : should we send the response instead?
 
 		// TODO : define host
-		api.SupervisorDone("", supervisorInstance.Id, response.Stats.ToStandard())
+		api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), response.Stats.ToStandard())
 
 		// provide the console with output indicating that the cluster has completed
 		// we already provide output when a cluster is provisioned, so it completes the state
