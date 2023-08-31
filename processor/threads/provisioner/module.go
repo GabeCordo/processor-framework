@@ -2,8 +2,6 @@ package provisioner
 
 import (
 	"errors"
-	"github.com/GabeCordo/keitt/processor/components/helper"
-	"github.com/GabeCordo/keitt/processor/components/module"
 	"github.com/GabeCordo/keitt/processor/components/provisioner"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 )
@@ -17,44 +15,42 @@ func (thread *Thread) ProcessGetModules(request *common.ProvisionerRequest) []*p
 
 func (thread *Thread) ProcessAddModule(request *common.ProvisionerRequest) error {
 
-	defer thread.requestWg.Done()
+	//defer thread.requestWg.Done()
+	//
+	//thread.logger.Printf("registering module at %s\n", request.Path)
+	//
+	//remoteModule, err := module.NewRemoteModule(request.Path)
+	//if err != nil {
+	//	thread.logger.Alertln("cannot find remote module")
+	//	return errors.New("cannot find remote module")
+	//}
+	//
+	//moduleInstance, err := remoteModule.Get()
+	//if err != nil {
+	//	thread.logger.Alertln("module built with older version")
+	//	return errors.New("module built with older version")
+	//}
+	//
+	//moduleWrapper, err := GetProvisionerInstance().InjectModule(moduleInstance)
+	//if err != nil {
+	//	thread.logger.Alertln("a module with that identifier already exists or is corrupt")
+	//	return errors.New("a module with that identifier already exists or is corrupt")
+	//}
+	//
+	////registeredClusters := moduleWrapper.GetClusters()
+	//
+	//// REGISTER ANY HELPERS TO CLUSTERS THAT HAVE DEFINED THEM WITHIN THE STRUCT
+	////for _, clusterWrapper := range registeredClusters {
+	////
+	////	//clusterImplementation := clusterWrapper.GetClusterImplementation()
+	////
+	////	//if helperImplementation, ok := (clusterImplementation).(helper.UsesHelper); ok {
+	////	//	helper, _ := helper.NewStandardHelper(moduleWrapper.Identifier, clusterWrapper.Identifier)
+	////	//	helperImplementation.SetHelper(helper)
+	////	//}
+	////}
 
-	thread.logger.Printf("registering module at %s\n", request.Path)
-
-	remoteModule, err := module.NewRemoteModule(request.Path)
-	if err != nil {
-		thread.logger.Alertln("cannot find remote module")
-		return errors.New("cannot find remote module")
-	}
-
-	moduleInstance, err := remoteModule.Get()
-	if err != nil {
-		thread.logger.Alertln("module built with older version")
-		return errors.New("module built with older version")
-	}
-
-	moduleWrapper, err := GetProvisionerInstance().InjectModule(moduleInstance)
-	if err != nil {
-		thread.logger.Alertln("a module with that identifier already exists or is corrupt")
-		return errors.New("a module with that identifier already exists or is corrupt")
-	}
-
-	registeredClusters := moduleWrapper.GetClusters()
-
-	// REGISTER ANY HELPERS TO CLUSTERS THAT HAVE DEFINED THEM WITHIN THE STRUCT
-	for _, clusterWrapper := range registeredClusters {
-
-		clusterImplementation := clusterWrapper.GetClusterImplementation()
-
-		if helperImplementation, ok := (clusterImplementation).(helper.UsesHelper); ok {
-			helper, _ := helper.NewStandardHelper(moduleWrapper.Identifier, clusterWrapper.Identifier)
-			helperImplementation.SetHelper(helper)
-		}
-	}
-
-	// TODO : complete
-	//err = api.CreateModule(thread.Config.Core, moduleInstance.Config)
-	return err
+	return nil
 }
 
 func (thread *Thread) ProcessDeleteModule(request *common.ProvisionerRequest) error {

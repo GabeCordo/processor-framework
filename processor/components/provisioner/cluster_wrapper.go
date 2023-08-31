@@ -5,12 +5,13 @@ import (
 	"github.com/GabeCordo/keitt/processor/components/supervisor"
 )
 
-func NewClusterWrapper(identifier string, mode cluster.EtlMode, implementation cluster.Cluster) *ClusterWrapper {
+func NewClusterWrapper(moduleName, identifier string, mode cluster.EtlMode, implementation cluster.Cluster) *ClusterWrapper {
 
 	clusterWrapper := new(ClusterWrapper)
 
-	clusterWrapper.registry = supervisor.NewRegistry(identifier, implementation)
+	clusterWrapper.registry = supervisor.NewRegistry(moduleName, identifier, implementation)
 	clusterWrapper.Identifier = identifier
+	clusterWrapper.Module = moduleName
 	clusterWrapper.Mode = mode
 	clusterWrapper.Mounted = false
 
@@ -53,9 +54,9 @@ func (clusterWrapper *ClusterWrapper) FindSupervisor(id uint64) (instance *super
 	return instance, found
 }
 
-func (clusterWrapper *ClusterWrapper) CreateSupervisor(metadata map[string]string, config ...*cluster.Config) *supervisor.Supervisor {
+func (clusterWrapper *ClusterWrapper) CreateSupervisor(metadata map[string]string, core string, config ...*cluster.Config) *supervisor.Supervisor {
 
-	return clusterWrapper.registry.CreateSupervisor(metadata, config...)
+	return clusterWrapper.registry.CreateSupervisor(metadata, core, config...)
 }
 
 func (clusterWrapper *ClusterWrapper) DeleteSupervisor(identifier uint64) (deleted, found bool) {

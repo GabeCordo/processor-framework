@@ -15,7 +15,7 @@ type Vec2D struct {
 type VectorCluster struct {
 }
 
-func (cluster VectorCluster) ExtractFunc(m cluster.M, c channel.OneWay) {
+func (cluster VectorCluster) ExtractFunc(h cluster.H, m cluster.M, c channel.OneWay) {
 
 	v := Vec2D{1, 5} // simulate pulling data from a source
 	for i := 0; i < 100; i++ {
@@ -23,7 +23,7 @@ func (cluster VectorCluster) ExtractFunc(m cluster.M, c channel.OneWay) {
 	}
 }
 
-func (cluster VectorCluster) TransformFunc(m cluster.M, in any) (out any, success bool) {
+func (cluster VectorCluster) TransformFunc(h cluster.H, m cluster.M, in any) (out any, success bool) {
 
 	v := (in).(Vec2D)
 
@@ -33,8 +33,8 @@ func (cluster VectorCluster) TransformFunc(m cluster.M, in any) (out any, succes
 	return v, true
 }
 
-func (cluster VectorCluster) LoadFunc(m cluster.M, in any) {
+func (cluster VectorCluster) LoadFunc(h cluster.H, m cluster.M, in any) {
 
 	v := (in).(Vec2D)
-	fmt.Printf("Vec(x: %d, y: %d)\n", v.x, v.y)
+	h.Log(fmt.Sprintf("Vec(x: %d, y: %d)\n", v.x, v.y))
 }

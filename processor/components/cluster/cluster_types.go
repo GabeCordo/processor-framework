@@ -38,25 +38,34 @@ const (
 type Transformer func(in []any) (out any, success bool)
 
 // M contains metadata about the running supervisor including any state
-// information that a devleoper might need to interact with the Supervisor.
+// information that a developer might need to interact with the Supervisor.
 type M interface {
 	GetKey(key string) string
+}
+
+type H interface {
+	IsDebugEnabled() bool
+	SaveToCache(data string) (string, error)
+	LoadFromCache(identifier string) (string, error)
+	Log(message string)
+	Warning(message string)
+	Fatal(message string)
 }
 
 // Cluster is a set of functions that define an ETL process
 // cluster functions are provisioned on goroutines to run in parallel and
 // process data.
 type Cluster interface {
-	ExtractFunc(metadata M, c channel.OneWay)
-	TransformFunc(metadata M, in any) (out any, success bool)
+	ExtractFunc(helper H, metadata M, c channel.OneWay)
+	TransformFunc(helper H, metadata M, in any) (out any, success bool)
 }
 
 type LoadAll interface {
-	LoadFunc(metadata M, in []any)
+	LoadFunc(helper H, metadata M, in []any)
 }
 
 type LoadOne interface {
-	LoadFunc(metadata M, in any)
+	LoadFunc(helper H, metadata M, in any)
 }
 
 type VerifiableET interface {

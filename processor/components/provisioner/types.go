@@ -14,6 +14,7 @@ type ClusterWrapper struct {
 	registry *supervisor.Registry
 
 	Identifier        string          `json:"identifier"`
+	Module            string          `json:"module"`
 	Mode              cluster.EtlMode `json:"mode"`
 	Mounted           bool            `json:"mounted"`
 	MarkedForDeletion bool            `json:"marked-for-deletion"`

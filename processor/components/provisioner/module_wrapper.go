@@ -84,7 +84,7 @@ func (moduleWrapper *ModuleWrapper) AddCluster(clusterName string, mode cluster.
 	moduleWrapper.mutex.Lock()
 	defer moduleWrapper.mutex.Unlock()
 
-	clusterWrapper := NewClusterWrapper(clusterName, mode, implementation)
+	clusterWrapper := NewClusterWrapper(moduleWrapper.Identifier, clusterName, mode, implementation)
 	clusterWrapper.Mounted = true
 	clusterWrapper.DefaultConfig = *cfg // copy
 

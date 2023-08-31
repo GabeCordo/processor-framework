@@ -6,7 +6,8 @@ import (
 )
 
 type Registry struct {
-	identifier string
+	module  string
+	cluster string
 
 	status         cluster.Status
 	implementation cluster.Cluster
@@ -20,6 +21,7 @@ type Registry struct {
 }
 
 type IdentifierRegistryPair struct {
-	Identifier string
-	Registry   *Registry
+	Module   string
+	Cluster  string
+	Registry *Registry
 }

@@ -46,7 +46,7 @@ func (thread *Thread) ProcessProvisionRequest(request *common.ProvisionerRequest
 	if request.Config == nil {
 		request.Config = &clusterWrapper.DefaultConfig
 	}
-	supervisorInstance := clusterWrapper.CreateSupervisor(request.Metadata, request.Config)
+	supervisorInstance := clusterWrapper.CreateSupervisor(request.Metadata, thread.Config.Core, request.Config)
 
 	thread.logger.Printf("%s[%s]%s Supervisor(%d) registered to cluster(%s)\n", logging.Green, request.Cluster, logging.Reset, supervisorInstance.Id, request.Module)
 

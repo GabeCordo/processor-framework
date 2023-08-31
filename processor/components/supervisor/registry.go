@@ -6,13 +6,14 @@ import (
 	"math"
 )
 
-func NewRegistry(clusterName string, clusterImplementation cluster.Cluster) *Registry {
+func NewRegistry(moduleName, clusterName string, clusterImplementation cluster.Cluster) *Registry {
 	registry := new(Registry)
 
 	registry.supervisors = make(map[uint64]*Supervisor)
 	registry.idReference = 0
 
-	registry.identifier = clusterName
+	registry.module = moduleName
+	registry.cluster = clusterName
 	registry.implementation = clusterImplementation
 	registry.status = cluster.UnMounted
 	registry.mounted = false
@@ -51,18 +52,20 @@ func (registry *Registry) IsMounted() bool {
 	return registry.mounted
 }
 
-func (registry *Registry) CreateSupervisor(metadata map[string]string, config ...*cluster.Config) *Supervisor {
+func (registry *Registry) CreateSupervisor(metadata map[string]string, core string, config ...*cluster.Config) *Supervisor {
 
 	id := registry.getNextUsableId()
 
 	registry.mutex.Lock()
 	defer registry.mutex.Unlock()
 
+	helper := cluster.NewHelper(core, registry.module, registry.cluster, id)
+
 	var supervisor *Supervisor
 	if len(config) > 0 {
-		supervisor = NewCustomSupervisor(registry.implementation, config[0], metadata)
+		supervisor = NewCustomSupervisor(registry.implementation, config[0], metadata, helper)
 	} else {
-		supervisor = NewSupervisor(registry.identifier, registry.implementation, metadata)
+		supervisor = NewSupervisor(registry.implementation, metadata, helper)
 	}
 	supervisor.Id = id
 
