@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"sync"
 )
 
 func NewConfig(name string) *Config {
@@ -40,8 +39,3 @@ func ConfigFromYAML(config *Config, path string) error {
 
 	return nil
 }
-
-var (
-	configLock     = &sync.Mutex{}
-	configInstance *Config
-)

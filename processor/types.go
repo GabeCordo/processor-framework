@@ -25,20 +25,20 @@ func (module Module) ToString() string {
 	case Provisioner:
 		return "provisioner"
 	default:
-		return "unknown"
+		return "-"
 	}
 }
 
 type Config struct {
 	Name               string  `yaml:"name"`
 	Debug              bool    `yaml:"debug"`
+	StandaloneMode     bool    `yaml:"standalone-mode"`
 	MaxWaitForResponse float64 `yaml:"max-wait-for-response"`
 	Core               string  `yaml:"core"`
 	Net                struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"net"`
-	StandaloneMode bool `yaml:"standalone-mode"`
 }
 
 type Processor struct {

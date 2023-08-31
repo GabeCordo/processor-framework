@@ -16,13 +16,6 @@ func (processor *Processor) Run() {
 
 	cfg := &processor_i.Config{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
 
-	if !processor.Config.StandaloneMode {
-		err := api.ConnectToCore(processor.Config.Core, cfg)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	processor.Logger.SetColour(logging.Purple)
 
 	if processor.Config.Debug {
@@ -30,6 +23,16 @@ func (processor *Processor) Run() {
 			processor.Logger.Println("running in STANDALONE mode")
 		} else {
 			processor.Logger.Println("running in CONNECTED mode")
+		}
+	}
+
+	if !processor.Config.StandaloneMode {
+		err := api.ConnectToCore(processor.Config.Core, cfg)
+		if err == nil {
+			processor.Logger.Printf("connected to a new core at %s\n", processor.Config.Core)
+		} else {
+			processor.Logger.Alertf("failed to connect to the core at %s\n", processor.Config.Core)
+			os.Exit(-1)
 		}
 	}
 
@@ -76,8 +79,13 @@ func (processor *Processor) Run() {
 
 	if !processor.Config.StandaloneMode {
 		err := api.DisconnectFromCore(processor.Config.Core, cfg)
-		if err != nil {
-			panic(err)
+		if err == nil {
+			processor.Logger.Printf("disconnected from the core at %s\n", processor.Config.Core)
+		} else {
+			processor.Logger.Alertf("failed to disconnect from the core at %s\n", processor.Config.Core)
+			processor.Logger.Alertln("\t1. the core is unreachable at the moment")
+			processor.Logger.Alertln("\t2. the core has crashed")
+			os.Exit(-1)
 		}
 	}
 }

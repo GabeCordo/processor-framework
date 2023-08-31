@@ -2,7 +2,6 @@ package provisioner
 
 import (
 	"errors"
-	"fmt"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 	"github.com/GabeCordo/mango/api"
 )
@@ -64,8 +63,6 @@ func (thread *Thread) Start() {
 	} else {
 
 		for _, moduleInst := range GetProvisionerInstance().GetModules() {
-
-			fmt.Println(thread.Config)
 			api.CreateModule(thread.Config.Core, &thread.Config.Processor, moduleInst.ToConfig())
 		}
 	}

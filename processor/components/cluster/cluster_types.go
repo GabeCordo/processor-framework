@@ -76,15 +76,15 @@ type Test interface {
 }
 
 type Config struct {
-	Identifier                  string  `json:"identifier"`
-	OnLoad                      OnLoad  `json:"on-load"`
-	OnCrash                     OnCrash `json:"on-crash"`
-	StartWithNTransformClusters int     `json:"start-with-n-t-channels"`
-	StartWithNLoadClusters      int     `json:"start-with-n-l-channels"`
-	ETChannelThreshold          int     `json:"et-channel-threshold"`
-	ETChannelGrowthFactor       int     `json:"et-channel-growth-factor"`
-	TLChannelThreshold          int     `json:"tl-channel-threshold"`
-	TLChannelGrowthFactor       int     `json:"tl-channel-growth-factor"`
+	Identifier                  string  `json:"identifier" yaml:"identifier"`
+	OnLoad                      OnLoad  `json:"on-load" yaml:"on-load"`
+	OnCrash                     OnCrash `json:"on-crash" yaml:"on-crash"`
+	StartWithNTransformClusters int     `json:"start-with-n-t-channels" yaml:"start-with-n-t-clusters"`
+	StartWithNLoadClusters      int     `json:"start-with-n-l-channels" yaml:"start-with-n-l-clusters"`
+	ETChannelThreshold          int     `json:"et-channel-threshold" yaml:"et-channel-threshold"`
+	ETChannelGrowthFactor       int     `json:"et-channel-growth-factor" yaml:"et-channel-growth-factor"`
+	TLChannelThreshold          int     `json:"tl-channel-threshold" yaml:"tl-channel-threshold"`
+	TLChannelGrowthFactor       int     `json:"tl-channel-growth-factor" yaml:"tl-channel-growth-factor"`
 }
 
 func (config Config) ToStandard() *cluster.Config {

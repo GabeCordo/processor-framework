@@ -20,7 +20,7 @@ const (
 	Failed              = "failed"
 	Stopping            = "stopping"
 	Terminated          = "terminated"
-	Unknown             = "unknown"
+	Unknown             = "-"
 )
 
 type Event uint8

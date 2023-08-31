@@ -17,6 +17,14 @@ var DefaultConfig Config = Config{
 	TLChannelGrowthFactor:       2,
 }
 
+func GenericConfig(identifier string) *Config {
+
+	cfg := new(Config)
+	*cfg = DefaultConfig // make a copy of the default config
+	cfg.Identifier = identifier
+	return cfg
+}
+
 func NewConfig(identifier string, etChannelThreshold, etChannelGrowthFactor, tlChannelThreshold, tlChannelGrowthFactor int, mode OnCrash) *Config {
 	config := new(Config)
 
