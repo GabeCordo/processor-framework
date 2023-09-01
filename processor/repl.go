@@ -33,6 +33,8 @@ func (processor *Processor) repl() {
 			processor.help()
 		} else if input == "info" {
 			processor.info()
+		} else if input == "supervisors" {
+			processor.supervisors()
 		} else if input == "stop" {
 			processor.Interrupt <- common.Shutdown
 		} else {
@@ -53,7 +55,7 @@ func (processor *Processor) help() {
 func (processor *Processor) info() {
 
 	request := common.ProvisionerRequest{
-		Action: common.ProvisionerGetModules,
+		Action: common.ProvisionerModuleGet,
 		Nonce:  rand.Uint32(),
 	}
 	processor.C1 <- request
@@ -74,6 +76,39 @@ func (processor *Processor) info() {
 		for _, cluster := range module.GetClusters() {
 
 			fmt.Printf("|  ├─%s\n", cluster.Identifier)
+		}
+	}
+}
+
+func (processor *Processor) supervisors() {
+
+	request := common.ProvisionerRequest{
+		Action: common.ProvisionerModuleGet,
+		Nonce:  rand.Uint32(),
+	}
+	processor.C1 <- request
+
+	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.MaxWaitForResponse)
+
+	if didTimeout {
+		fmt.Println("failed to load supervisor data")
+		return
+	}
+
+	response := (rsp).(common.ProvisionerResponse)
+	modules := (response.Data).([]*provisioner.ModuleWrapper)
+
+	for _, module := range modules {
+
+		fmt.Printf("├─ %s\n", module.Identifier)
+		for _, cluster := range module.GetClusters() {
+
+			fmt.Printf("|   ├─ %s\n", cluster.Identifier)
+
+			for _, instance := range cluster.FindSupervisors() {
+
+				fmt.Printf("|   |   ├─ %d (state: %s)\n", instance.Id, instance.State.ToString())
+			}
 		}
 	}
 }
@@ -121,7 +156,7 @@ func (processor *Processor) executeCluster(module, cluster string, metadata map[
 		logging.Gray, module, cluster, metadataStr, logging.Reset)
 
 	request := common.ProvisionerRequest{
-		Action:   common.ProvisionerCreateSupervisor,
+		Action:   common.ProvisionerSupervisorCreate,
 		Source:   common.User,
 		Module:   module,
 		Cluster:  cluster,

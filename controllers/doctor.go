@@ -27,12 +27,6 @@ func (cmd DoctorCommand) Run(cli *commandline.CommandLine) commandline.Terminate
 		fmt.Printf("[✓] the processor folder exists (%s)\n", DefaultProcessorFolder)
 	}
 
-	if _, err := os.Stat(DefaultModulesFolder); err != nil {
-		fmt.Printf("[x] the modules folder is missing (%s)\n", DefaultModulesFolder)
-	} else {
-		fmt.Printf("[✓] the modules folder exists (%s)\n", DefaultModulesFolder)
-	}
-
 	// TODO : verify processor config file
 	if _, err := os.Stat(DefaultProcessorConfig); err != nil {
 		fmt.Printf("[x] the processor config is missing (%s)\n", DefaultProcessorFolder)

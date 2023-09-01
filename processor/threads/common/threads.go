@@ -13,13 +13,12 @@ type ProvisionerConfig struct {
 	Debug string
 }
 
-type ProvisionerAction string
+type ProvisionerAction uint8
 
 const (
-	ProvisionerGetModules       ProvisionerAction = "get"
-	ProvisionerCreateModule                       = "create"
-	ProvisionerDeleteModule                       = "delete"
-	ProvisionerCreateSupervisor                   = "provision"
+	ProvisionerModuleGet ProvisionerAction = iota
+	ProvisionerSupervisorGet
+	ProvisionerSupervisorCreate
 )
 
 type ProvisionerSource string

@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/GabeCordo/commandline"
 	"github.com/GabeCordo/keitt/processor"
+	"github.com/GabeCordo/keitt/processor/clusters"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -26,11 +27,14 @@ func (command StartCommand) Run(cli *commandline.CommandLine) commandline.Termin
 	if err := yaml.NewDecoder(f).Decode(cfg); err != nil {
 		panic(err)
 	}
+	cfg.StandaloneMode = true
 
 	processor, err := processor.New(cfg)
 	if err != nil {
 		panic(err)
 	}
+
+	clusters.LinkCommon(processor)
 
 	processor.Run()
 

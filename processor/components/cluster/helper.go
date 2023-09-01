@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	"fmt"
 	"github.com/GabeCordo/mango/api"
 )
 
@@ -40,20 +39,17 @@ func (helper StandardHelper) LoadFromCache(identifier string) (string, error) {
 	return api.GetFromCache(helper.host, identifier)
 }
 
-func (helper StandardHelper) Log(message string) {
+func (helper StandardHelper) Log(message string) error {
 
-	err := api.Log(helper.host, helper.supervisor, message)
-	fmt.Println(err)
+	return api.Log(helper.host, helper.supervisor, message)
 }
 
-func (helper StandardHelper) Warning(message string) {
+func (helper StandardHelper) Warning(message string) error {
 
-	err := api.LogWarn(helper.host, helper.supervisor, message)
-	fmt.Println(err)
+	return api.LogWarn(helper.host, helper.supervisor, message)
 }
 
-func (helper StandardHelper) Fatal(message string) {
+func (helper StandardHelper) Fatal(message string) error {
 
-	err := api.LogError(helper.host, helper.supervisor, message)
-	fmt.Println(err)
+	return api.LogError(helper.host, helper.supervisor, message)
 }

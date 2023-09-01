@@ -6,4 +6,3 @@ import (
 
 var DefaultProcessorFolder = common.DefaultFrameworkFolder + "go/"
 var DefaultProcessorConfig = DefaultProcessorFolder + "processor.etl.yaml"
-var DefaultModulesFolder = DefaultProcessorFolder + "modules/"

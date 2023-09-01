@@ -12,10 +12,6 @@ func (thread *Thread) Setup() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/module", func(w http.ResponseWriter, r *http.Request) {
-		thread.moduleCallback(w, r)
-	})
-
 	mux.HandleFunc("/supervisor", func(w http.ResponseWriter, r *http.Request) {
 		thread.supervisorCallback(w, r)
 	})

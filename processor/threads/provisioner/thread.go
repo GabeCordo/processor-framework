@@ -49,7 +49,7 @@ func (thread *Thread) Start() {
 				}
 
 				request := &common.ProvisionerRequest{
-					Action:   common.ProvisionerCreateSupervisor,
+					Action:   common.ProvisionerSupervisorCreate,
 					Source:   common.Core,
 					Module:   moduleInst.Identifier,
 					Cluster:  clusterInst.Identifier,
@@ -57,7 +57,7 @@ func (thread *Thread) Start() {
 					Metadata: make(map[string]string),
 				}
 				thread.requestWg.Add(1)
-				thread.ProcessProvisionRequest(request)
+				thread.provisionSupervisor(request)
 			}
 		}
 	} else {
@@ -81,14 +81,10 @@ func (thread *Thread) processRequest(request *common.ProvisionerRequest) {
 	response := &common.ProvisionerResponse{Error: nil, Nonce: request.Nonce}
 
 	switch request.Action {
-	case common.ProvisionerGetModules:
-		response.Data = thread.ProcessGetModules(request)
-	case common.ProvisionerCreateSupervisor:
-		response.Error = thread.ProcessProvisionRequest(request)
-	case common.ProvisionerCreateModule:
-		response.Error = thread.ProcessAddModule(request)
-	case common.ProvisionerDeleteModule:
-		response.Error = thread.ProcessDeleteModule(request)
+	case common.ProvisionerModuleGet:
+		response.Data = thread.getModules()
+	case common.ProvisionerSupervisorCreate:
+		response.Error = thread.provisionSupervisor(request)
 	default:
 		response.Error = errors.New("bad request")
 		thread.requestWg.Done()

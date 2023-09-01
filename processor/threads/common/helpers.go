@@ -6,44 +6,6 @@ import (
 	"math/rand"
 )
 
-func RegisterModule(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
-	modulePath string, timeout float64) error {
-
-	request := ProvisionerRequest{
-		Action: ProvisionerCreateModule,
-		Path:   modulePath,
-		Nonce:  rand.Uint32(),
-	}
-	pipe <- request
-
-	rsp, didTimeout := multithreaded.SendAndWait(responseTable, request.Nonce, timeout)
-	if didTimeout {
-		return multithreaded.NoResponseReceived
-	}
-
-	response := (rsp).(ProvisionerResponse)
-	return response.Error
-}
-
-func DeleteModule(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
-	moduleName string, timeout float64) error {
-
-	request := ProvisionerRequest{
-		Action: ProvisionerDeleteModule,
-		Module: moduleName,
-		Nonce:  rand.Uint32(),
-	}
-	pipe <- request
-
-	data, didTimeout := multithreaded.SendAndWait(responseTable, request.Nonce, timeout)
-	if didTimeout {
-		return multithreaded.NoResponseReceived
-	}
-
-	response := (data).(ProvisionerResponse)
-	return response.Error
-}
-
 func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
 	moduleName, clusterName string, meta map[string]string, cfg *cluster.Config, timeout float64) error {
 
@@ -53,7 +15,7 @@ func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithr
 		meta = make(map[string]string)
 	}
 	provisionerThreadRequest := ProvisionerRequest{
-		Action:   ProvisionerCreateSupervisor,
+		Action:   ProvisionerSupervisorCreate,
 		Module:   moduleName,
 		Cluster:  clusterName,
 		Metadata: meta,

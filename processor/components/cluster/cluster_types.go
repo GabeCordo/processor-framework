@@ -47,9 +47,9 @@ type H interface {
 	IsDebugEnabled() bool
 	SaveToCache(data string) (string, error)
 	LoadFromCache(identifier string) (string, error)
-	Log(message string)
-	Warning(message string)
-	Fatal(message string)
+	Log(message string) error
+	Warning(message string) error
+	Fatal(message string) error
 }
 
 // Cluster is a set of functions that define an ETL process

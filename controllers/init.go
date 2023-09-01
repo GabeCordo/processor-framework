@@ -37,17 +37,6 @@ func (cmd InitCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		}
 	}
 
-	if _, err := os.Stat(DefaultModulesFolder); err == nil {
-		fmt.Printf("[-] the modules folder has already been initialized (%s)\n", DefaultModulesFolder)
-	} else {
-		if err := os.Mkdir(DefaultModulesFolder, 0700); err != nil {
-			fmt.Printf("[x] failed to create %s directory %s\n", DefaultModulesFolder, err.Error())
-			return commandline.Terminate
-		} else {
-			fmt.Printf("[✓] created modules folder %s\n", DefaultModulesFolder)
-		}
-	}
-
 	if _, err := os.Stat(DefaultProcessorConfig); err == nil {
 		fmt.Printf("[-] the global config has already been initialized (%s)\n", DefaultProcessorConfig)
 	} else {

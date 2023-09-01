@@ -9,7 +9,12 @@ import (
 	"time"
 )
 
-func (thread *Thread) ProcessProvisionRequest(request *common.ProvisionerRequest) error {
+func (thread *Thread) getSupervisor() []*supervisor.Supervisor {
+
+	return nil
+}
+
+func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) error {
 
 	// Note: all mount checks have been moved to the core
 

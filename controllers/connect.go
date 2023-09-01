@@ -4,7 +4,6 @@ import (
 	"github.com/GabeCordo/commandline"
 	"github.com/GabeCordo/keitt/processor"
 	"github.com/GabeCordo/keitt/processor/clusters"
-	"github.com/GabeCordo/keitt/processor/components/cluster"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -43,23 +42,7 @@ func (cmd ConnectCommand) Run(cli *commandline.CommandLine) commandline.Terminat
 		panic(err)
 	}
 
-	mod := processor.Module("common")
-	mod.Version = 1.0
-	mod.Mounted = true
-
-	v := clusters.VectorCluster{}
-	ccfg := &cluster.Config{
-		Identifier:                  "vec",
-		OnLoad:                      cluster.CompleteAndPush,
-		OnCrash:                     cluster.DoNothing,
-		StartWithNTransformClusters: 1,
-		StartWithNLoadClusters:      1,
-		ETChannelThreshold:          1,
-		ETChannelGrowthFactor:       2,
-		TLChannelThreshold:          1,
-		TLChannelGrowthFactor:       2,
-	}
-	mod.AddCluster("vec", cluster.Batch, v, ccfg)
+	clusters.LinkCommon(processor)
 
 	processor.Run()
 
