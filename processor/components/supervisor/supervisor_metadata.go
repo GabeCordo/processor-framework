@@ -1,7 +1,6 @@
 package supervisor
 
 import (
-	"github.com/GabeCordo/fack"
 	"github.com/GabeCordo/keitt/processor/components/cluster"
 	"sync"
 )
@@ -33,6 +32,6 @@ func (metadata *M) GetKey(key string) string {
 	if value, found := metadata.data[key]; found {
 		return value
 	} else {
-		return fack.EmptyString
+		return ""
 	}
 }

@@ -36,6 +36,20 @@ func (processor *Processor) Run() {
 		}
 	}
 
+	if !processor.Config.StandaloneMode {
+		defer func() {
+			err := api.DisconnectFromCore(processor.Config.Core, cfg)
+			if err == nil {
+				processor.Logger.Printf("disconnected from the core at %s\n", processor.Config.Core)
+			} else {
+				processor.Logger.Alertf("failed to disconnect from the core at %s\n", processor.Config.Core)
+				processor.Logger.Alertln("\t1. the core is unreachable at the moment")
+				processor.Logger.Alertln("\t2. the core has crashed")
+				os.Exit(-1)
+			}
+		}()
+	}
+
 	processor.Provisioner.Setup()
 	if processor.Config.Debug {
 		processor.Logger.Println("started provisioner thread")
@@ -75,18 +89,6 @@ func (processor *Processor) Run() {
 	processor.Provisioner.Teardown()
 	if processor.Config.Debug {
 		processor.Logger.Println("provisioner thread shutdown")
-	}
-
-	if !processor.Config.StandaloneMode {
-		err := api.DisconnectFromCore(processor.Config.Core, cfg)
-		if err == nil {
-			processor.Logger.Printf("disconnected from the core at %s\n", processor.Config.Core)
-		} else {
-			processor.Logger.Alertf("failed to disconnect from the core at %s\n", processor.Config.Core)
-			processor.Logger.Alertln("\t1. the core is unreachable at the moment")
-			processor.Logger.Alertln("\t2. the core has crashed")
-			os.Exit(-1)
-		}
 	}
 }
 

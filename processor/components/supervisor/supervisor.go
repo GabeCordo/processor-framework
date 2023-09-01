@@ -176,6 +176,7 @@ func (supervisor *Supervisor) Provision(segment cluster.Segment) {
 			{
 				defer func() {
 					if r := recover(); r != nil {
+						log.Println(r)
 						log.Println("cluster.Extract function raised error")
 						supervisor.ETChannel.ProducerDone()
 						supervisor.waitGroup.Done()

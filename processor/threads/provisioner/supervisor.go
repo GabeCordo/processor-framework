@@ -84,8 +84,20 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 
 		// let the provisioner thread decrement the semaphore otherwise we will be stuck in deadlock waiting for
 		// the provisioned cluster to complete before allowing the etl-threads to shut down
-		thread.requestWg.Done()
+		if !clusterWrapper.IsStream() {
+			thread.requestWg.Done()
+		}
 	}()
+
+	// TODO : this is a temp fix for the system getting caught in an inf. deadlock
+	// the issue is streams are running (listening) 24/7
+	// we want to be able to shutdown the processor and unregister it from the core as an operator
+	//
+	// in future: discuss how to guarantee the data that is pulled is fully processed first
+	// why I rushed this: this is an experimental version for NON production use
+	if clusterWrapper.IsStream() {
+		thread.requestWg.Done()
+	}
 
 	return nil
 }
