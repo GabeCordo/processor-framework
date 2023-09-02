@@ -67,6 +67,7 @@ func (provisioner *Provisioner) AddModule(identifier string) error {
 	mod := NewModuleWrapper()
 	mod.Mounted = true
 	mod.Identifier = identifier
+	mod.Version = 1.0
 	provisioner.modules[identifier] = mod
 
 	return nil

@@ -67,13 +67,12 @@ func (moduleWrapper *ModuleWrapper) GetCluster(clusterName string) (clusterWrapp
 	return clusterWrapper, found
 }
 
-func (moduleWrapper *ModuleWrapper) AddCluster(clusterName string, mode cluster.EtlMode, implementation cluster.Cluster, cfg *cluster.Config) (*ClusterWrapper, error) {
+// AddCluster
+// Creates a new cluster record within the calling module. The cluster name defines the keyword
+// an operator uses to provision a cluster, and the mode represents how the cluster is run.
+func (moduleWrapper *ModuleWrapper) AddCluster(clusterName string, mode string, implementation cluster.Cluster, cfg ...*cluster.Config) (*ClusterWrapper, error) {
 
 	moduleWrapper.mutex.RLock()
-
-	if cfg == nil {
-		return nil, errors.New("a valid config must be passed to the AddCluster function")
-	}
 
 	if _, found := moduleWrapper.clusters[clusterName]; found {
 		return nil, errors.New("a cluster with this identifier already exists")
@@ -84,9 +83,15 @@ func (moduleWrapper *ModuleWrapper) AddCluster(clusterName string, mode cluster.
 	moduleWrapper.mutex.Lock()
 	defer moduleWrapper.mutex.Unlock()
 
-	clusterWrapper := NewClusterWrapper(moduleWrapper.Identifier, clusterName, mode, implementation)
+	clusterWrapper := NewClusterWrapper(moduleWrapper.Identifier, clusterName, cluster.EtlMode(mode), implementation)
 	clusterWrapper.Mounted = true
-	clusterWrapper.DefaultConfig = *cfg // copy
+	clusterWrapper.DefaultConfig = cluster.DefaultConfig  // copy
+	clusterWrapper.DefaultConfig.Identifier = clusterName // copy
+
+	for _, c := range cfg {
+		clusterWrapper.DefaultConfig = *c
+		clusterWrapper.DefaultConfig.Identifier = clusterName
+	}
 
 	moduleWrapper.clusters[clusterName] = clusterWrapper
 

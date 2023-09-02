@@ -12,6 +12,8 @@ import (
 	"syscall"
 )
 
+// Run
+// Start the processor and wait for SYSINT blocking the calling thread.
 func (processor *Processor) Run() {
 
 	cfg := &processor_i.Config{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
@@ -92,6 +94,9 @@ func (processor *Processor) Run() {
 	}
 }
 
+// Module
+// Find or create a new module to encapsulate clusters within. A module can be
+// described as a set of clusters that relate in terms of functionality.
 func (processor *Processor) Module(name string) *provisioner2.ModuleWrapper {
 
 	if _, found := provisioner.GetProvisionerInstance().GetModule(name); !found {

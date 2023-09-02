@@ -31,8 +31,8 @@ const (
 type EtlMode string
 
 const (
-	Batch  EtlMode = "Batch"
-	Stream         = "Stream"
+	Batch  EtlMode = "mode/batch"  // The cluster is provisioned when invoked by an operator or application.
+	Stream         = "mode/stream" // The cluster is provisioned automatically when the system is started.
 )
 
 type Transformer func(in []any) (out any, success bool)
