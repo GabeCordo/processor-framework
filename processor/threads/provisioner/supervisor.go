@@ -84,9 +84,9 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 
 		// let the provisioner thread decrement the semaphore otherwise we will be stuck in deadlock waiting for
 		// the provisioned cluster to complete before allowing the etl-threads to shut down
-		if !clusterWrapper.IsStream() {
-			thread.requestWg.Done()
-		}
+		//if !clusterWrapper.IsStream() {
+		thread.requestWg.Done()
+		//}
 	}()
 
 	// TODO : this is a temp fix for the system getting caught in an inf. deadlock
@@ -95,9 +95,9 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 	//
 	// in future: discuss how to guarantee the data that is pulled is fully processed first
 	// why I rushed this: this is an experimental version for NON production use
-	if clusterWrapper.IsStream() {
-		thread.requestWg.Done()
-	}
+	//if clusterWrapper.IsStream() {
+	//	thread.requestWg.Done()
+	//}
 
 	return nil
 }

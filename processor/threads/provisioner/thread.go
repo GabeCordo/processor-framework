@@ -2,6 +2,7 @@ package provisioner
 
 import (
 	"errors"
+	"fmt"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 	"github.com/GabeCordo/mango/api"
 )
@@ -35,14 +36,8 @@ func (thread *Thread) Start() {
 	if thread.Config.Standalone {
 
 		for _, moduleInst := range GetProvisionerInstance().GetModules() {
-			if !moduleInst.IsMounted() {
-				continue
-			}
 
 			for _, clusterInst := range moduleInst.GetClusters() {
-				if !clusterInst.IsMounted() {
-					continue
-				}
 
 				if !clusterInst.IsStream() {
 					continue
@@ -96,6 +91,34 @@ func (thread *Thread) processRequest(request *common.ProvisionerRequest) {
 
 func (thread *Thread) Teardown() {
 	thread.accepting = false
+
+	modules := GetProvisionerInstance().GetModules()
+
+	for _, module := range modules {
+
+		clusters := module.GetClusters()
+
+		for _, cluster := range clusters {
+
+			if !cluster.IsStream() {
+				continue
+			}
+
+			supervisors := cluster.FindSupervisors()
+
+			for _, supervisor := range supervisors {
+
+				if !supervisor.IsAlive() {
+
+					fmt.Printf("supervisor is not alive %d %s\n", supervisor.Id, supervisor.State.ToString())
+					continue
+				}
+
+				fmt.Printf("marking supervisor as teardown %d\n", supervisor.Id)
+				supervisor.Teardown()
+			}
+		}
+	}
 
 	thread.requestWg.Wait()
 }

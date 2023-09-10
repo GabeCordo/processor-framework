@@ -30,12 +30,13 @@ func (module Module) ToString() string {
 }
 
 type Config struct {
-	Name               string  `yaml:"name"`
-	Debug              bool    `yaml:"debug"`
-	StandaloneMode     bool    `yaml:"standalone-mode"`
-	MaxWaitForResponse float64 `yaml:"max-wait-for-response"`
-	Core               string  `yaml:"core"`
-	Net                struct {
+	Name           string  `yaml:"name"`
+	Debug          bool    `yaml:"debug"`
+	StandaloneMode bool    `yaml:"standalone"`
+	ReplMode       bool    `yaml:"repl"`
+	Timeout        float64 `yaml:"timeout"`
+	Core           string  `yaml:"core"`
+	Net            struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"net"`
@@ -68,7 +69,7 @@ func New(cfg *Config) (*Processor, error) {
 
 	httpConfig := &http.Config{
 		Debug:   cfg.Debug,
-		Timeout: cfg.MaxWaitForResponse,
+		Timeout: cfg.Timeout,
 		Net:     fmt.Sprintf("%s:%d", cfg.Net.Host, cfg.Net.Port),
 	}
 	httpLogger, err := logging.NewLogger(HttpProcessor.ToString(), &cfg.Debug)
@@ -80,7 +81,7 @@ func New(cfg *Config) (*Processor, error) {
 
 	provisionerConfig := &provisioner.Config{
 		Debug:      true,
-		Timeout:    cfg.MaxWaitForResponse,
+		Timeout:    cfg.Timeout,
 		Standalone: cfg.StandaloneMode,
 		Core:       cfg.Core,
 		Processor:  processor_i.Config{Host: cfg.Net.Host, Port: cfg.Net.Port},

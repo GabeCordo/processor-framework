@@ -23,5 +23,5 @@ func LinkCommon(processor *processor.Processor) {
 		TLChannelThreshold:          1,
 		TLChannelGrowthFactor:       2,
 	}
-	mod.AddCluster("vec", cluster.Batch, v, ccfg)
+	mod.AddCluster("vec", string(cluster.Stream), v, ccfg)
 }

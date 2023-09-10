@@ -44,6 +44,8 @@ func (supervisor *Supervisor) Event(event Event) bool {
 			supervisor.State = Running
 		} else if event == Error {
 			supervisor.State = Failed
+		} else if event == Suspend {
+			supervisor.State = Stopping
 		} else {
 			return false
 		}
@@ -58,6 +60,14 @@ func (supervisor *Supervisor) Event(event Event) bool {
 	}
 
 	return true // represents a boolean ~ hasStateChanged?
+}
+
+func (supervisor *Supervisor) IsAlive() bool {
+
+	supervisor.mutex.RLock()
+	defer supervisor.mutex.RUnlock()
+
+	return (supervisor.State != Failed) && (supervisor.State != Terminated)
 }
 
 func (supervisor *Supervisor) Start() (response *cluster.Response) {
@@ -128,7 +138,6 @@ func (supervisor *Supervisor) Runtime() {
 		supervisor.ETChannel.GetState()
 
 		if (supervisor.State == Stopping) && supervisor.ETChannel.Accepting() {
-			fmt.Println("stop ET Channel input")
 			supervisor.ETChannel.StopPushes()
 		}
 
@@ -145,10 +154,10 @@ func (supervisor *Supervisor) Runtime() {
 
 		supervisor.TLChannel.GetState()
 
-		if (supervisor.State == Stopping) && supervisor.TLChannel.Accepting() {
-			fmt.Println("stop TL Channel input")
-			supervisor.TLChannel.StopPushes()
-		}
+		// TODO : I don't think this is needed
+		//if (supervisor.State == Stopping) && supervisor.TLChannel.Accepting() {
+		//	supervisor.TLChannel.StopPushes()
+		//}
 
 		// is TLChannel congested?
 		if supervisor.TLChannel.GetState() == channel.Congested {
@@ -164,6 +173,30 @@ func (supervisor *Supervisor) Runtime() {
 		// check if the channel is congested after DefaultMonitorRefreshDuration seconds
 		time.Sleep(DefaultMonitorRefreshDuration * time.Second)
 	}
+}
+
+func (supervisor *Supervisor) ExtractWrapper(h cluster.H, m cluster.M, out cluster.Out) <-chan struct{} {
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		supervisor.group.ExtractFunc(h, m, out)
+	}()
+	return done
+}
+
+func (supervisor *Supervisor) ExtractShutdownWrapper() <-chan struct{} {
+	done := make(chan struct{})
+	defer close(done)
+
+	for {
+		if supervisor.State == Stopping {
+			break
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	return done
 }
 
 func (supervisor *Supervisor) Provision(segment cluster.Segment) {
@@ -183,10 +216,16 @@ func (supervisor *Supervisor) Provision(segment cluster.Segment) {
 					}
 				}()
 				supervisor.Stats.Threads.NumProvisionedExtractRoutines++
-				oneWayChannel, _ := channel.NewOneWayManagedChannel(supervisor.ETChannel)
+				oneWayChannel, _ := cluster.NewOneWayManagedChannel(supervisor.ETChannel)
 
 				supervisor.ETChannel.AddProducer()
-				supervisor.group.ExtractFunc(supervisor.helper, supervisor.Metadata, oneWayChannel)
+
+				select {
+				case <-supervisor.ExtractWrapper(supervisor.helper, supervisor.Metadata, oneWayChannel):
+					break
+				case <-supervisor.ExtractShutdownWrapper():
+					break
+				}
 				supervisor.ETChannel.ProducerDone()
 			}
 		case cluster.Transform:

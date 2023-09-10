@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	"github.com/GabeCordo/keitt/processor/components/channel"
 	"github.com/GabeCordo/mango/core/interfaces/cluster"
 	"time"
 )
@@ -52,11 +51,15 @@ type H interface {
 	Fatal(message string) error
 }
 
+type Out interface {
+	Push(any) bool
+}
+
 // Cluster is a set of functions that define an ETL process
 // cluster functions are provisioned on goroutines to run in parallel and
 // process data.
 type Cluster interface {
-	ExtractFunc(helper H, metadata M, c channel.OneWay)
+	ExtractFunc(helper H, metadata M, out Out)
 	TransformFunc(helper H, metadata M, in any) (out any, success bool)
 }
 
@@ -79,7 +82,7 @@ type VerifiableTL interface {
 // Test
 // TODO : needs to be implemented
 type Test interface {
-	MockExtractFunc(metadata M, c channel.OneWay)
+	MockExtractFunc(metadata M, out Out)
 	VerifyTransformOutput(metadata M, in any) (success bool)
 	MockLoadFunc(metadata M, in any)
 }

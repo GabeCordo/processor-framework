@@ -60,7 +60,7 @@ func (processor *Processor) info() {
 	}
 	processor.C1 <- request
 
-	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.MaxWaitForResponse)
+	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.Timeout)
 
 	if didTimeout {
 		fmt.Println("failed to load attached modules")
@@ -88,7 +88,7 @@ func (processor *Processor) supervisors() {
 	}
 	processor.C1 <- request
 
-	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.MaxWaitForResponse)
+	rsp, didTimeout := multithreaded.SendAndWait(processor.HttpThread.ProvisionerResponseTable, request.Nonce, processor.Config.Timeout)
 
 	if didTimeout {
 		fmt.Println("failed to load supervisor data")

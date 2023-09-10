@@ -2,8 +2,8 @@ package clusters
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/GabeCordo/keitt/processor/components/channel"
 	"github.com/GabeCordo/keitt/processor/components/cluster"
 )
 
@@ -15,11 +15,15 @@ type Vec2D struct {
 type VectorCluster struct {
 }
 
-func (cluster VectorCluster) ExtractFunc(h cluster.H, m cluster.M, c channel.OneWay) {
+func (cluster VectorCluster) ExtractFunc(h cluster.H, m cluster.M, out cluster.Out) {
 
 	v := Vec2D{1, 5} // simulate pulling data from a source
 	for i := 0; i < 100; i++ {
-		c.Push(v) // send data to the TransformFunc
+		time.Sleep(100 * time.Millisecond)
+		success := out.Push(v) // send data to the TransformFunc
+		if !success {
+			break // the channel was closed (the processor is shutdown, so stop)
+		}
 	}
 }
 
@@ -36,5 +40,5 @@ func (cluster VectorCluster) TransformFunc(h cluster.H, m cluster.M, in any) (ou
 func (cluster VectorCluster) LoadFunc(h cluster.H, m cluster.M, in any) {
 
 	v := (in).(Vec2D)
-	h.Log(fmt.Sprintf("Vec(x: %d, y: %d)\n", v.x, v.y))
+	fmt.Printf("Vec(x: %d, y: %d)\n", v.x, v.y)
 }

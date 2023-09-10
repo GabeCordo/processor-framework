@@ -28,7 +28,6 @@ func (mc *ManagedChannel) Push(data DataWrapper) bool {
 
 	// don't push to the channel if it is supposed to be closed
 	if mc.StopNewPushes {
-		fmt.Println("cant push new data")
 		return false
 	}
 

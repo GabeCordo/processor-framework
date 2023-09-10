@@ -64,7 +64,9 @@ func (processor *Processor) Run() {
 	}
 	go processor.HttpThread.Start()
 
-	go processor.repl()
+	if processor.Config.ReplMode {
+		go processor.repl()
+	}
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)

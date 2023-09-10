@@ -47,9 +47,9 @@ func (cmd InitCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		}
 
 		defaultConfig := processor.Config{
-			Name:               "a",
-			Debug:              true,
-			MaxWaitForResponse: 2,
+			Name:    "a",
+			Debug:   true,
+			Timeout: 2,
 			Net: struct {
 				Host string `yaml:"host"`
 				Port int    `yaml:"port"`
