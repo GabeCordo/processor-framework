@@ -40,5 +40,5 @@ func (cluster VectorCluster) TransformFunc(h cluster.H, m cluster.M, in any) (ou
 func (cluster VectorCluster) LoadFunc(h cluster.H, m cluster.M, in any) {
 
 	v := (in).(Vec2D)
-	fmt.Printf("Vec(x: %d, y: %d)\n", v.x, v.y)
+	h.Log(fmt.Sprintf("Vec(x: %d, y: %d)", v.x, v.y))
 }

@@ -47,8 +47,11 @@ type H interface {
 	SaveToCache(data string) (string, error)
 	LoadFromCache(identifier string) (string, error)
 	Log(message string) error
+	Logf(format string, data ...any) error
 	Warning(message string) error
+	Warningf(format string, data ...any) error
 	Fatal(message string) error
+	Fatalf(format string, data ...any) error
 }
 
 type Out interface {

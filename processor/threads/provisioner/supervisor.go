@@ -51,7 +51,7 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 	if request.Config == nil {
 		request.Config = &clusterWrapper.DefaultConfig
 	}
-	supervisorInstance := clusterWrapper.CreateSupervisor(request.Metadata, thread.Config.Core, request.Config)
+	supervisorInstance := clusterWrapper.CreateSupervisor(request.Metadata, thread.Config.Core, thread.Config.Standalone, request.Config)
 
 	thread.logger.Printf("%s[%s]%s Supervisor(%d) registered to cluster(%s)\n", logging.Green, request.Cluster, logging.Reset, supervisorInstance.Id, request.Module)
 
@@ -59,12 +59,28 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 
 	go func() {
 
+		if !thread.Config.Standalone && clusterWrapper.IsStream() {
+			go func() {
+				for {
+					if !supervisorInstance.IsAlive() {
+						break
+					} else {
+						api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), supervisorInstance.Stats.ToStandard())
+					}
+					
+					time.Sleep(1 * time.Second)
+				}
+			}()
+		}
+
 		// block until the supervisor completes
 		response := supervisorInstance.Start()
 		// TODO : should we send the response instead?
 
 		// TODO : define host
-		api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), response.Stats.ToStandard())
+		if !thread.Config.Standalone {
+			api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), response.Stats.ToStandard())
+		}
 
 		// provide the console with output indicating that the cluster has completed
 		// we already provide output when a cluster is provisioned, so it completes the state
