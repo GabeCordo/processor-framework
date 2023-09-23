@@ -90,6 +90,10 @@ func (supervisor *Supervisor) Start() (response *cluster.Response) {
 
 	supervisor.StartTime = time.Now()
 
+	if sysFunc, ok := (supervisor.group).(cluster.SystemFunctions); ok {
+		sysFunc.Setup(supervisor.StartTime, supervisor.helper)
+	}
+
 	//// start creating the default frontend goroutines
 	supervisor.Provision(cluster.Extract)
 
@@ -125,6 +129,10 @@ func (supervisor *Supervisor) Start() (response *cluster.Response) {
 }
 
 func (supervisor *Supervisor) Teardown() {
+
+	if sysFunc, ok := (supervisor.group).(cluster.SystemFunctions); ok {
+		sysFunc.Teardown(time.Now(), supervisor.helper)
+	}
 
 	supervisor.Event(Suspend)
 }

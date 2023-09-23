@@ -74,6 +74,11 @@ type LoadOne interface {
 	LoadFunc(helper H, metadata M, in any)
 }
 
+type SystemFunctions interface {
+	Setup(curr time.Time, h H)
+	Teardown(curr time.Time, h H)
+}
+
 type VerifiableET interface {
 	VerifyETFunction(in any) (valid bool)
 }
