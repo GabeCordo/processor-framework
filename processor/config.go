@@ -17,8 +17,9 @@ func NewConfig(name string) *Config {
 }
 
 func ConfigFromYAML(config *Config, path string) error {
-	if _, err := os.Stat(path); err != nil {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// file does not exist
+		log.Println("foo")
 		log.Println(err)
 		return err
 	}
