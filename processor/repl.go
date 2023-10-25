@@ -117,21 +117,41 @@ func (processor *Processor) parseInput(input string) (module, cluster string, me
 
 	metadata = make(map[string]string)
 
-	input = strings.Replace(input, "\n", "", -1)
-
-	i := strings.Split(input, " ")
+	i := strings.SplitN(input, " ", 2)
 
 	switch numOfParams := len(i); {
 	case numOfParams >= 2:
-		i := i[1:]
-		for _, pair := range i {
-			k := strings.Split(pair, ":")
-			if len(k) != 2 {
+		key := ""
+		value := ""
+		inKey := true
+		inQuotation := false
+		for _, c := range []rune(i[1]) {
+			if (c == ':') && inKey {
+				inKey = false
+			} else if (c == ':') && !inKey {
 				err = BadSyntax
 				break
+			} else if (c == '"') && !inKey {
+				inQuotation = !inQuotation
+			} else if (c == '"') && inKey {
+				err = BadSyntax
+				break
+			} else if ((c == ' ') && !inQuotation) || (c == '\n') {
+				inKey = true
+				metadata[key] = value
+				key = ""
+				value = ""
+			} else if (c == ' ') && inKey {
+				err = BadSyntax
+				break
+			} else if inKey {
+				key += string(c)
 			} else {
-				metadata[k[0]] = k[1]
+				value += string(c)
 			}
+		}
+		if len(key) > 0 {
+			metadata[key] = value
 		}
 		fallthrough
 	case numOfParams >= 1:
@@ -170,14 +190,13 @@ func formatMap(data map[string]string) string {
 	output := "{"
 	idx := 0
 	for key, value := range data {
-		var postfix string
-		if idx != (len(data) - 1) {
-			postfix = fmt.Sprint(",")
-		} else {
-			postfix = fmt.Sprint("}")
+		postfix := ","
+		if (len(data) - 1) == idx {
+			postfix = ""
 		}
 		output += fmt.Sprintf("%s:%s%s", key, value, postfix)
 		idx++
 	}
+	output += "}"
 	return output
 }

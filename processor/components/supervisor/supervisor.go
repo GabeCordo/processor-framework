@@ -185,8 +185,14 @@ func (supervisor *Supervisor) Runtime() {
 
 func (supervisor *Supervisor) ExtractWrapper(h cluster.H, m cluster.M, out cluster.Out) <-chan struct{} {
 	done := make(chan struct{})
+
+	// the function always finishes till completion unless a direct shutdown is called on the server
+	// which stops data collection from some source
 	go func() {
-		defer close(done)
+		defer func() {
+			done <- struct{}{}
+			close(done)
+		}()
 		supervisor.group.ExtractFunc(h, m, out)
 	}()
 	return done
@@ -194,15 +200,20 @@ func (supervisor *Supervisor) ExtractWrapper(h cluster.H, m cluster.M, out clust
 
 func (supervisor *Supervisor) ExtractShutdownWrapper() <-chan struct{} {
 	done := make(chan struct{})
-	defer close(done)
 
-	for {
-		if supervisor.State == Stopping {
-			break
+	// we need to create a separate goroutine otherwise it will block the current
+	// thread from re-evaluating the select statement wherever the ExtractShutdownWrapper is called
+	go func() {
+		defer close(done)
+		for {
+			// the IsAlive clause ensures that once a supervisor is dead, we will not leak memory
+			// with a forever-running goroutine
+			if (supervisor.State == Stopping) || (!supervisor.IsAlive()) {
+				break
+			}
+			time.Sleep(1 * time.Second)
 		}
-
-		time.Sleep(1 * time.Second)
-	}
+	}()
 
 	return done
 }
@@ -232,6 +243,7 @@ func (supervisor *Supervisor) Provision(segment cluster.Segment) {
 				case <-supervisor.ExtractWrapper(supervisor.helper, supervisor.Metadata, oneWayChannel):
 					break
 				case <-supervisor.ExtractShutdownWrapper():
+					fmt.Println("shutdown caused extract to finish early")
 					break
 				}
 				supervisor.ETChannel.ProducerDone()
