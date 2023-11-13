@@ -23,5 +23,19 @@ func LinkCommon(processor *processor.Processor) {
 		TLChannelThreshold:          1,
 		TLChannelGrowthFactor:       2,
 	}
-	mod.AddCluster("vec", string(cluster.Stream), v, ccfg)
+	mod.AddCluster("vec", string(cluster.Batch), v, ccfg)
+
+	h := HelloCluster{}
+	hcfg := &cluster.Config{
+		Identifier:                  "hello",
+		OnLoad:                      cluster.CompleteAndPush,
+		OnCrash:                     cluster.DoNothing,
+		StartWithNTransformClusters: 1,
+		StartWithNLoadClusters:      1,
+		ETChannelThreshold:          1,
+		ETChannelGrowthFactor:       2,
+		TLChannelThreshold:          1,
+		TLChannelGrowthFactor:       2,
+	}
+	mod.AddCluster("hello", string(cluster.Batch), h, hcfg)
 }

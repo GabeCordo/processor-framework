@@ -63,6 +63,8 @@ func New(cfg *Config) (*Processor, error) {
 	}
 	processor.Config = cfg
 
+	fmt.Println(processor.Config.Timeout)
+
 	processor.Interrupt = make(chan common.InterruptEvent, 1)
 	processor.C1 = make(chan common.ProvisionerRequest, 10)
 	processor.C2 = make(chan common.ProvisionerResponse, 10)

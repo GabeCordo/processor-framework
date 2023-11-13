@@ -10,7 +10,7 @@ func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithr
 	moduleName, clusterName string, meta map[string]string, cfg *cluster.Config, timeout float64) error {
 
 	// there is a possibility the user never passed an args value to the HTTP endpoint,
-	// so we need to replace it with and empty arry
+	// so we need to replace it with and empty array
 	if meta == nil {
 		meta = make(map[string]string)
 	}
