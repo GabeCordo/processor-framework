@@ -13,10 +13,12 @@ func (thread *Thread) Setup() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/supervisor", func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
 		thread.supervisorCallback(w, r)
 	})
 
 	mux.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
 		thread.debugCallback(w, r)
 	})
 
@@ -30,13 +32,20 @@ func (thread *Thread) Setup() {
 	}
 
 	thread.mux = mux
+
+	thread.server = &http.Server{
+		Addr:        thread.Config.Net,
+		Handler:     thread.mux,
+		ReadTimeout: 2 * time.Second,
+	}
+	thread.server.SetKeepAlivesEnabled(false)
 }
 
 func (thread *Thread) Start() {
 	thread.wg.Add(1)
 
 	go func(thread *Thread) {
-		err := http.ListenAndServe(thread.Config.Net, thread.mux)
+		err := thread.server.ListenAndServe()
 		if err != nil {
 			thread.Interrupt <- common.Panic
 		}

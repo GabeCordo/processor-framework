@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/GabeCordo/keitt/processor/threads/common"
 	"github.com/GabeCordo/mango/api"
+	"time"
 )
 
 func (thread *Thread) Setup() {
@@ -62,6 +63,22 @@ func (thread *Thread) Start() {
 		}
 	}
 
+	// CLEARING THE PROVISIONER BACKLOG
+
+	go func() {
+
+		for {
+
+			if (thread.NumOfActiveSupervisors() < MaxNumOfSupervisors) && (len(thread.requestBacklog) > 0) {
+				request := thread.requestBacklog[0]
+				thread.C1 <- request
+				thread.requestBacklog = thread.requestBacklog[1:]
+			}
+
+			time.Sleep(10 * time.Millisecond)
+		}
+	}()
+
 	thread.listenersWg.Wait()
 	thread.requestWg.Wait()
 }
@@ -87,6 +104,27 @@ func (thread *Thread) processRequest(request *common.ProvisionerRequest) {
 
 	response.Success = response.Error == nil
 	thread.respond(response)
+}
+
+func (thread *Thread) NumOfActiveSupervisors() int {
+	thread.backlogMutex.RLock()
+	defer thread.backlogMutex.RUnlock()
+
+	return thread.numOfActiveSupervisors
+}
+
+func (thread *Thread) IncrementActiveSupervisors() {
+	thread.backlogMutex.Lock()
+	defer thread.backlogMutex.Unlock()
+
+	thread.numOfActiveSupervisors++
+}
+
+func (thread *Thread) DecrementActiveSupervisors() {
+	thread.backlogMutex.Lock()
+	defer thread.backlogMutex.Unlock()
+
+	thread.numOfActiveSupervisors--
 }
 
 func (thread *Thread) Teardown() {

@@ -1,7 +1,7 @@
 github.com/GabeCordo/commandline v0.1.7 h1:Xg5wAFkuZmc1l405s5Med2kAPb1n5lybl84e9EsFf7U=
 github.com/GabeCordo/commandline v0.1.7/go.mod h1:PpEJZ9in2hhhZKvLNViNCl26O9Aij/A0fiJmYazRmdI=
-github.com/GabeCordo/mango v0.2.2-alpha h1:k/jR2JO4K1eIESH6ufDWOCXm43cNT+0atNJzp3sW6zk=
-github.com/GabeCordo/mango v0.2.2-alpha/go.mod h1:KCMrNPR5YE2Ax9LaZ5gPaMDkcQqgOBGN5KG0y8K3SIM=
+github.com/GabeCordo/mango v0.2.5-alpha h1:WnfbOwwliBcMcUi3ZLsdRlUlOi6F5C3UZM3cwb2jZuw=
+github.com/GabeCordo/mango v0.2.5-alpha/go.mod h1:KCMrNPR5YE2Ax9LaZ5gPaMDkcQqgOBGN5KG0y8K3SIM=
 github.com/GabeCordo/toolchain v0.1.6 h1:DntZ5RQfQ9zh1VffdDajHjWV7eWe+9oZ+RIHk8d6NT0=
 github.com/GabeCordo/toolchain v0.1.6/go.mod h1:2UmX2lHst0LFC4GyFCprBfBk0XbLo9DAQM6cuXHYh3U=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

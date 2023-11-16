@@ -76,6 +76,7 @@ func (helper StandardHelper) Log(message string) (err error) {
 		err = nil
 	} else {
 		err = api.Log(helper.host, helper.supervisor, message)
+		//fmt.Println(message)
 	}
 
 	return err
@@ -94,6 +95,7 @@ func (helper StandardHelper) Warning(message string) (err error) {
 		err = nil
 	} else {
 		err = api.LogWarn(helper.host, helper.supervisor, message)
+		//fmt.Println(message)
 	}
 
 	return err
@@ -112,6 +114,7 @@ func (helper StandardHelper) Fatal(message string) (err error) {
 		err = nil
 	} else {
 		err = api.LogError(helper.host, helper.supervisor, message)
+		//fmt.Println(message)
 	}
 
 	return err

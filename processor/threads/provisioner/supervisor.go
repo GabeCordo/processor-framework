@@ -6,6 +6,7 @@ import (
 	"github.com/GabeCordo/mango/api"
 	"github.com/GabeCordo/mango/core/components/supervisor"
 	"github.com/GabeCordo/toolchain/logging"
+	"log"
 	"time"
 )
 
@@ -44,6 +45,23 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 		return errors.New("a stream cluster cannot be provisioned by a user")
 	}
 
+	// if we have exceeded the number of supervisors we want to run on the processor,
+	// we can add it to a queue that will be run at another time.
+	//
+	// note: we can tell the core pre-maturely that the supervisor was provisioned so
+	// 		 that the caller is told that the request successfully reached this server.
+	if thread.NumOfActiveSupervisors() >= MaxNumOfSupervisors {
+		if request != nil {
+			thread.requestBacklog = append(thread.requestBacklog, *request)
+			thread.requestWg.Done()
+		} else {
+			log.Printf("tried to add request to backlog but found nil pointer request")
+		}
+		return nil
+	} else {
+		thread.IncrementActiveSupervisors()
+	}
+
 	thread.logger.Printf("%s[%s]%s Provisioning cluster in module %s\n", logging.Green, request.Cluster, logging.Reset, request.Module)
 
 	// Note: configs are now sent from the core, we don't need to worry about looking for, verifying, or
@@ -67,7 +85,7 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 					} else {
 						api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), supervisorInstance.Stats.ToStandard())
 					}
-					
+
 					time.Sleep(1 * time.Second)
 				}
 			}()
@@ -101,6 +119,7 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 		// let the provisioner thread decrement the semaphore otherwise we will be stuck in deadlock waiting for
 		// the provisioned cluster to complete before allowing the etl-threads to shut down
 		//if !clusterWrapper.IsStream() {
+		thread.DecrementActiveSupervisors()
 		thread.requestWg.Done()
 		//}
 	}()

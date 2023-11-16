@@ -8,6 +8,8 @@ import (
 	"sync"
 )
 
+const MaxNumOfSupervisors = 5
+
 type Config struct {
 	Debug      bool
 	Timeout    float64
@@ -25,6 +27,10 @@ type Thread struct {
 	C2 chan<- common.ProvisionerResponse // Supervisor is sending responses to the http_thread
 
 	logger *logging.Logger
+
+	requestBacklog         []common.ProvisionerRequest // a backlog of provision requests we want to avoid congesting the server
+	numOfActiveSupervisors int                         // tracks the number of supervisors running in the system at a time
+	backlogMutex           sync.RWMutex
 
 	accepting   bool
 	listenersWg sync.WaitGroup
@@ -57,6 +63,9 @@ func NewThread(cfg *Config, logger *logging.Logger, channels ...interface{}) (*T
 		return nil, errors.New("expected no nil *provisioner.Config type")
 	}
 	provisioner.Config = cfg
+
+	provisioner.requestBacklog = make([]common.ProvisionerRequest, 0)
+	provisioner.numOfActiveSupervisors = 0
 
 	provisioner.logger.SetColour(logging.Orange)
 
