@@ -1,4 +1,4 @@
-# keitt
+# mango
 A lightweight framework for extract-transform-load (ETL) based processes that interfaces with the Mango platform.
 
 This library is still in its early days, more documentation will be added as it's used for internal projects.
