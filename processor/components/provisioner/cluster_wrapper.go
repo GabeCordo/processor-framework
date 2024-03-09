@@ -1,8 +1,8 @@
 package provisioner
 
 import (
-	"github.com/GabeCordo/keitt/processor/components/cluster"
-	"github.com/GabeCordo/keitt/processor/components/supervisor"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/components/supervisor"
 )
 
 func NewClusterWrapper(moduleName, identifier string, mode cluster.EtlMode, implementation cluster.Cluster) *ClusterWrapper {

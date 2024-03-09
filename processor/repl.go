@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/keitt/processor/components/provisioner"
-	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/processor-framework/processor/components/provisioner"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"github.com/GabeCordo/toolchain/logging"
 	"github.com/GabeCordo/toolchain/multithreaded"
 	"math/rand"
@@ -23,7 +23,7 @@ func (processor *Processor) repl() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Print(logging.Orange + "@" + logging.Green + "keitt " + logging.Reset)
+		fmt.Print(logging.Green + "@" + logging.Blue + "pf " + logging.Reset)
 
 		input, _ := reader.ReadString('\n')
 		input = strings.Replace(input, "\n", "", -1)

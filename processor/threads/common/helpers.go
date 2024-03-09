@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
 	"github.com/GabeCordo/toolchain/multithreaded"
 	"math/rand"
 )

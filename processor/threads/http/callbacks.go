@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/keitt/processor/components/cluster"
-	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/mango/core/interfaces/communication"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"github.com/GabeCordo/toolchain/multithreaded"
 	"net/http"
 	"time"
@@ -58,7 +58,7 @@ func (thread *Thread) postSupervisorCallback(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	response := communication.Response{Success: err == nil}
+	response := interfaces.Response{Success: err == nil}
 	if err != nil {
 		response.Description = err.Error()
 	}
@@ -100,7 +100,7 @@ func (thread *Thread) postDebugCallback(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response := communication.Response{Success: true}
+	response := interfaces.Response{Success: true}
 
 	if request.Action == "shutdown" {
 		common.ShutdownCore(thread.Interrupt)

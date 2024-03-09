@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	"github.com/GabeCordo/mango/core/interfaces/cluster"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
 	"time"
 )
 
@@ -58,6 +58,8 @@ type Out interface {
 	Push(any) bool
 }
 
+type Lambda func(helper H, metadata M) (out any, success bool)
+
 // Cluster is a set of functions that define an ETL process
 // cluster functions are provisioned on goroutines to run in parallel and
 // process data.
@@ -107,13 +109,13 @@ type Config struct {
 	TLChannelGrowthFactor       int     `json:"tl-channel-growth-factor" yaml:"tl-channel-growth-factor"`
 }
 
-func (config Config) ToStandard() *cluster.Config {
+func (config Config) ToStandard() *interfaces.Config {
 
-	dst := new(cluster.Config)
+	dst := new(interfaces.Config)
 
 	dst.Identifier = config.Identifier
-	dst.OnLoad = cluster.OnLoad(config.OnLoad)
-	dst.OnCrash = cluster.OnCrash(config.OnCrash)
+	dst.OnLoad = interfaces.OnLoad(config.OnLoad)
+	dst.OnCrash = interfaces.OnCrash(config.OnCrash)
 	dst.StartWithNTransformClusters = config.StartWithNTransformClusters
 	dst.StartWithNLoadClusters = config.StartWithNLoadClusters
 	dst.ETChannelThreshold = config.ETChannelThreshold
@@ -138,8 +140,8 @@ type TimingStatistics struct {
 	MedianTime       time.Duration `json:"median-time-ns"`
 }
 
-func (ts TimingStatistics) ToStandard() *cluster.TimingStatistics {
-	standard := new(cluster.TimingStatistics)
+func (ts TimingStatistics) ToStandard() *interfaces.TimingStatistics {
+	standard := new(interfaces.TimingStatistics)
 
 	standard.MinTimeBeforePop = ts.MinTimeBeforePop
 	standard.MaxTimeBeforePop = ts.MaxTimeBeforePop
@@ -178,9 +180,9 @@ type Statistics struct {
 	} `json:"timing"`
 }
 
-func (statistics *Statistics) ToStandard() *cluster.Statistics {
+func (statistics *Statistics) ToStandard() *interfaces.Statistics {
 
-	standard := new(cluster.Statistics)
+	standard := new(interfaces.Statistics)
 
 	standard.Threads = statistics.Threads
 	standard.Channels = statistics.Channels

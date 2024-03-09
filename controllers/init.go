@@ -3,8 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/keitt/processor"
-	"github.com/GabeCordo/mango/core/threads/common"
+	"github.com/GabeCordo/processor-framework/processor"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -14,15 +13,15 @@ type InitCommand struct {
 
 func (cmd InitCommand) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-	if _, err := os.Stat(common.DefaultFrameworkFolder); err == nil {
-		fmt.Printf("[-] the framework folder has already been initialized (%s)\n", common.DefaultFrameworkFolder)
+	if _, err := os.Stat(DefaultFrameworkFolder); err == nil {
+		fmt.Printf("[-] the framework folder has already been initialized (%s)\n", DefaultFrameworkFolder)
 	} else {
 		fmt.Println(os.IsExist(err))
-		if err = os.Mkdir(common.DefaultFrameworkFolder, 0700); err != nil {
-			fmt.Printf("[x] the root processor folder could not be initialized %s (%s)\n", err.Error(), common.DefaultFrameworkFolder)
+		if err = os.Mkdir(DefaultFrameworkFolder, 0700); err != nil {
+			fmt.Printf("[x] the root processor folder could not be initialized %s (%s)\n", err.Error(), DefaultFrameworkFolder)
 			return commandline.Terminate
 		} else {
-			fmt.Printf("[✓] the root processor folder has been initialized (%s)\n", common.DefaultFrameworkFolder)
+			fmt.Printf("[✓] the root processor folder has been initialized (%s)\n", DefaultFrameworkFolder)
 		}
 	}
 

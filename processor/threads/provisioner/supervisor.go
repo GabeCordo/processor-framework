@@ -2,15 +2,15 @@ package provisioner
 
 import (
 	"errors"
-	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/mango/api"
-	"github.com/GabeCordo/mango/core/components/supervisor"
+	"github.com/GabeCordo/processor-framework/processor/api"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"github.com/GabeCordo/toolchain/logging"
 	"log"
 	"time"
 )
 
-func (thread *Thread) getSupervisor() []*supervisor.Supervisor {
+func (thread *Thread) getSupervisor() []*interfaces.Supervisor {
 
 	return nil
 }
@@ -83,7 +83,7 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 					if !supervisorInstance.IsAlive() {
 						break
 					} else {
-						api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), supervisorInstance.Stats.ToStandard())
+						api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, interfaces.SupervisorStatus(supervisorInstance.State), supervisorInstance.Stats.ToStandard())
 					}
 
 					time.Sleep(1 * time.Second)
@@ -97,7 +97,7 @@ func (thread *Thread) provisionSupervisor(request *common.ProvisionerRequest) er
 
 		// TODO : define host
 		if !thread.Config.Standalone {
-			api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, supervisor.Status(supervisorInstance.State), response.Stats.ToStandard())
+			api.UpdateSupervisor(thread.Config.Core, supervisorInstance.Id, interfaces.SupervisorStatus(supervisorInstance.State), response.Stats.ToStandard())
 		}
 
 		// provide the console with output indicating that the cluster has completed

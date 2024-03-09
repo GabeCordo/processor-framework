@@ -3,10 +3,10 @@ package processor
 import (
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/keitt/processor/threads/http"
-	"github.com/GabeCordo/keitt/processor/threads/provisioner"
-	processor_i "github.com/GabeCordo/mango/core/interfaces/processor"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
+	"github.com/GabeCordo/processor-framework/processor/threads/http"
+	"github.com/GabeCordo/processor-framework/processor/threads/provisioner"
 	"github.com/GabeCordo/toolchain/logging"
 )
 
@@ -86,7 +86,7 @@ func New(cfg *Config) (*Processor, error) {
 		Timeout:    cfg.Timeout,
 		Standalone: cfg.StandaloneMode,
 		Core:       cfg.Core,
-		Processor:  processor_i.Config{Host: cfg.Net.Host, Port: cfg.Net.Port},
+		Processor:  interfaces.ProcessorConfig{Host: cfg.Net.Host, Port: cfg.Net.Port},
 	}
 	provisionerLogger, err := logging.NewLogger(Provisioner.ToString(), &processor.Config.Debug)
 	if err != nil {

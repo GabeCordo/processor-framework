@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/keitt/controllers"
+	"github.com/GabeCordo/processor-framework/controllers"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package cluster
 
 import (
 	"errors"
-	"github.com/GabeCordo/keitt/processor/components/channel"
+	"github.com/GabeCordo/processor-framework/processor/components/channel"
 	"math/rand"
 )
 

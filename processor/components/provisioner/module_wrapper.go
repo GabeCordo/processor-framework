@@ -3,9 +3,8 @@ package provisioner
 import (
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/keitt/processor/components/cluster"
-	cluster_i "github.com/GabeCordo/mango/core/interfaces/cluster"
-	"github.com/GabeCordo/mango/core/interfaces/module"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
 	"log"
 )
 
@@ -141,22 +140,22 @@ func (moduleWrapper *ModuleWrapper) CanDelete() (canDelete bool) {
 	return canDelete
 }
 
-func (moduleWrapper *ModuleWrapper) ToConfig() *module.Config {
-	cfg := new(module.Config)
+func (moduleWrapper *ModuleWrapper) ToConfig() *interfaces.ModuleConfig {
+	cfg := new(interfaces.ModuleConfig)
 
 	cfg.Name = moduleWrapper.Identifier
 	cfg.Version = moduleWrapper.Version
-	cfg.Exports = make([]module.Cluster, len(moduleWrapper.clusters))
+	cfg.Exports = make([]interfaces.Cluster, len(moduleWrapper.clusters))
 
 	idx := 0
 	for _, cluster := range moduleWrapper.clusters {
-		cfg.Exports[idx] = module.Cluster{
+		cfg.Exports[idx] = interfaces.Cluster{
 			Cluster:     cluster.Identifier,
 			StaticMount: cluster.Mounted,
-			Config: module.ClusterConfig{
-				Mode:    cluster_i.EtlMode(cluster.Mode),
-				OnCrash: cluster_i.OnCrash(cluster.DefaultConfig.OnCrash),
-				OnLoad:  cluster_i.OnLoad(cluster.DefaultConfig.OnLoad),
+			Config: interfaces.ClusterConfig{
+				Mode:    interfaces.EtlMode(cluster.Mode),
+				OnCrash: interfaces.OnCrash(cluster.DefaultConfig.OnCrash),
+				OnLoad:  interfaces.OnLoad(cluster.DefaultConfig.OnLoad),
 				Static: struct {
 					TFunctions int `yaml:"t-functions" json:"t-functions"`
 					LFunctions int `yaml:"l-functions" json:"l-functions"`
@@ -165,14 +164,14 @@ func (moduleWrapper *ModuleWrapper) ToConfig() *module.Config {
 					LFunctions: cluster.DefaultConfig.StartWithNTransformClusters,
 				},
 				Dynamic: struct {
-					TFunction module.DynamicFeatures `yaml:"t-function" json:"t-function"`
-					LFunction module.DynamicFeatures `yaml:"l-function" json:"l-function"`
+					TFunction interfaces.DynamicFeatures `yaml:"t-function" json:"t-function"`
+					LFunction interfaces.DynamicFeatures `yaml:"l-function" json:"l-function"`
 				}{
-					TFunction: module.DynamicFeatures{
+					TFunction: interfaces.DynamicFeatures{
 						Threshold:    cluster.DefaultConfig.ETChannelThreshold,
 						GrowthFactor: cluster.DefaultConfig.ETChannelGrowthFactor,
 					},
-					LFunction: module.DynamicFeatures{
+					LFunction: interfaces.DynamicFeatures{
 						Threshold:    cluster.DefaultConfig.TLChannelThreshold,
 						GrowthFactor: cluster.DefaultConfig.TLChannelGrowthFactor,
 					},

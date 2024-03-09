@@ -1,8 +1,8 @@
 package clusters
 
 import (
-	"github.com/GabeCordo/keitt/processor"
-	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
 )
 
 func LinkCommon(processor *processor.Processor) {

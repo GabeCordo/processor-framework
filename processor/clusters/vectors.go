@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
 )
 
 type Vec2D struct {

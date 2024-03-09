@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/GabeCordo/commandline"
-	"github.com/GabeCordo/keitt/processor"
-	"github.com/GabeCordo/keitt/processor/clusters"
+	"github.com/GabeCordo/processor-framework/processor"
+	"github.com/GabeCordo/processor-framework/processor/clusters"
 	"gopkg.in/yaml.v3"
 	"os"
 )

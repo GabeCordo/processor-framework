@@ -1,6 +1,6 @@
 package provisioner
 
-import "github.com/GabeCordo/keitt/processor/components/provisioner"
+import "github.com/GabeCordo/processor-framework/processor/components/provisioner"
 
 func (thread *Thread) getModules() []*provisioner.ModuleWrapper {
 

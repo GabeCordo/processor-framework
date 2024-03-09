@@ -2,7 +2,7 @@ package http
 
 import (
 	"context"
-	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"net/http"
 	"net/http/pprof"
 	"time"

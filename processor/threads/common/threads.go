@@ -1,6 +1,6 @@
 package common
 
-import "github.com/GabeCordo/keitt/processor/components/cluster"
+import "github.com/GabeCordo/processor-framework/processor/components/cluster"
 
 type InterruptEvent uint8
 

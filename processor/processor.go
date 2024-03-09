@@ -1,11 +1,11 @@
 package processor
 
 import (
-	provisioner2 "github.com/GabeCordo/keitt/processor/components/provisioner"
-	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/keitt/processor/threads/provisioner"
-	"github.com/GabeCordo/mango/api"
-	processor_i "github.com/GabeCordo/mango/core/interfaces/processor"
+	"github.com/GabeCordo/processor-framework/processor/api"
+	provisioner2 "github.com/GabeCordo/processor-framework/processor/components/provisioner"
+	"github.com/GabeCordo/processor-framework/processor/interfaces"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
+	"github.com/GabeCordo/processor-framework/processor/threads/provisioner"
 	"github.com/GabeCordo/toolchain/logging"
 	"os"
 	"os/signal"
@@ -16,7 +16,7 @@ import (
 // Start the processor and wait for SYSINT blocking the calling thread.
 func (processor *Processor) Run() {
 
-	cfg := &processor_i.Config{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
+	cfg := &interfaces.ProcessorConfig{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
 
 	processor.Logger.SetColour(logging.Purple)
 

@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 	"errors"
-	"github.com/GabeCordo/keitt/processor/threads/common"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"github.com/GabeCordo/toolchain/logging"
 	"github.com/GabeCordo/toolchain/multithreaded"
 	"net/http"

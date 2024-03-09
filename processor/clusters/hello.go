@@ -1,7 +1,7 @@
 package clusters
 
 import (
-	"github.com/GabeCordo/keitt/processor/components/cluster"
+	"github.com/GabeCordo/processor-framework/processor/components/cluster"
 )
 
 type HelloCluster struct {

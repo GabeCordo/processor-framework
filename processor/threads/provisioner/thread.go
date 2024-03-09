@@ -3,8 +3,8 @@ package provisioner
 import (
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/keitt/processor/threads/common"
-	"github.com/GabeCordo/mango/api"
+	"github.com/GabeCordo/processor-framework/processor/api"
+	"github.com/GabeCordo/processor-framework/processor/threads/common"
 	"time"
 )
 

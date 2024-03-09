@@ -3,7 +3,7 @@ package cluster
 import (
 	"errors"
 	"fmt"
-	"github.com/GabeCordo/mango/api"
+	"github.com/GabeCordo/processor-framework/processor/api"
 	"github.com/GabeCordo/toolchain/logging"
 )
 
