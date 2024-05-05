@@ -29,14 +29,15 @@ const (
 )
 
 type ProvisionerRequest struct {
-	Action   ProvisionerAction
-	Source   ProvisionerSource
-	Module   string
-	Cluster  string
-	Config   *cluster.Config
-	Metadata map[string]string
-	Path     string
-	Nonce    uint32
+	Action     ProvisionerAction
+	Source     ProvisionerSource
+	Module     string
+	Cluster    string
+	Supervisor uint64
+	Config     *cluster.Config
+	Metadata   map[string]string
+	Path       string
+	Nonce      uint32
 }
 
 type ProvisionerResponse struct {

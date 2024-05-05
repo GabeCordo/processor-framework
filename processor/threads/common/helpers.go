@@ -7,7 +7,7 @@ import (
 )
 
 func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithreaded.ResponseTable,
-	moduleName, clusterName string, meta map[string]string, cfg *cluster.Config, timeout float64) error {
+	moduleName, clusterName string, supervisor uint64, meta map[string]string, cfg *cluster.Config, timeout float64) error {
 
 	// there is a possibility the user never passed an args value to the HTTP endpoint,
 	// so we need to replace it with and empty array
@@ -15,12 +15,13 @@ func SupervisorProvision(pipe chan<- ProvisionerRequest, responseTable *multithr
 		meta = make(map[string]string)
 	}
 	provisionerThreadRequest := ProvisionerRequest{
-		Action:   ProvisionerSupervisorCreate,
-		Module:   moduleName,
-		Cluster:  clusterName,
-		Metadata: meta,
-		Config:   cfg,
-		Nonce:    rand.Uint32(),
+		Action:     ProvisionerSupervisorCreate,
+		Module:     moduleName,
+		Cluster:    clusterName,
+		Supervisor: supervisor,
+		Metadata:   meta,
+		Config:     cfg,
+		Nonce:      rand.Uint32(),
 	}
 	pipe <- provisionerThreadRequest
 

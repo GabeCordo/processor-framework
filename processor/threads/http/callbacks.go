@@ -50,7 +50,7 @@ func (thread *Thread) postSupervisorCallback(w http.ResponseWriter, r *http.Requ
 	}
 
 	err = common.SupervisorProvision(thread.C1, thread.ProvisionerResponseTable,
-		request.Module, request.Cluster, request.Metadata, &request.Config, thread.Config.Timeout)
+		request.Module, request.Cluster, request.Supervisor, request.Metadata, &request.Config, thread.Config.Timeout)
 
 	if errors.Is(err, multithreaded.NoResponseReceived) {
 		w.WriteHeader(http.StatusInternalServerError)

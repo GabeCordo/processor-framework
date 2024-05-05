@@ -52,14 +52,12 @@ func (registry *Registry) IsMounted() bool {
 	return registry.mounted
 }
 
-func (registry *Registry) CreateSupervisor(metadata map[string]string, core string, standalone bool, config ...*cluster.Config) *Supervisor {
-
-	id := registry.getNextUsableId()
+func (registry *Registry) CreateSupervisor(identifier uint64, metadata map[string]string, core string, standalone bool, config ...*cluster.Config) *Supervisor {
 
 	registry.mutex.Lock()
 	defer registry.mutex.Unlock()
 
-	helper := cluster.NewHelper(core, registry.module, registry.cluster, id, standalone)
+	helper := cluster.NewHelper(core, registry.module, registry.cluster, identifier, standalone)
 
 	var supervisor *Supervisor
 	if len(config) > 0 {
@@ -67,10 +65,10 @@ func (registry *Registry) CreateSupervisor(metadata map[string]string, core stri
 	} else {
 		supervisor = NewSupervisor(registry.implementation, metadata, helper)
 	}
-	supervisor.Id = id
+	supervisor.Id = identifier
 
 	registry.numOfActiveSupervisors++
-	registry.supervisors[id] = supervisor
+	registry.supervisors[identifier] = supervisor
 	return supervisor
 }
 
