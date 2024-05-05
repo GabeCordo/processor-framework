@@ -278,6 +278,8 @@ func (supervisor *Supervisor) Provision(segment cluster.Segment) {
 					if success {
 						supervisor.Stats.Data.TotalOverTLChannel++
 						supervisor.TLChannel.Push(channel.DataWrapper{Id: request.Id, Data: data})
+					} else {
+						fmt.Printf("trans failed: %d\n", request.Id)
 					}
 				}
 
@@ -308,14 +310,14 @@ func (supervisor *Supervisor) Provision(segment cluster.Segment) {
 						continue
 					}
 
-					if a, success := (supervisor.group).(cluster.LoadOne); success {
+					if a, clusterUsesLoadOneByOne := (supervisor.group).(cluster.LoadOne); clusterUsesLoadOneByOne {
 						a.LoadFunc(supervisor.helper, supervisor.Metadata, request.Data)
 					} else if _, success := (supervisor.group).(cluster.LoadAll); success {
 						aggregatedData = append(aggregatedData, request.Data)
 					}
 				}
 
-				if a, success := (supervisor.group).(cluster.LoadAll); success {
+				if a, clusterUsesLoadAllAtEnd := (supervisor.group).(cluster.LoadAll); clusterUsesLoadAllAtEnd {
 					a.LoadFunc(supervisor.helper, supervisor.Metadata, aggregatedData)
 				}
 			}
