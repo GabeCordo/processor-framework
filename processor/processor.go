@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"fmt"
 	"github.com/GabeCordo/processor-framework/processor/api"
 	provisioner2 "github.com/GabeCordo/processor-framework/processor/components/provisioner"
 	"github.com/GabeCordo/processor-framework/processor/interfaces"
@@ -69,10 +70,11 @@ func (processor *Processor) Run() {
 	}
 
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGTERM)
 
 	select {
 	case <-sigs:
+		fmt.Println()
 		processor.Interrupt <- common.Panic
 	case interrupt := <-processor.Interrupt:
 		switch interrupt {
