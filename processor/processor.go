@@ -17,7 +17,7 @@ import (
 // Start the processor and wait for SYSINT blocking the calling thread.
 func (processor *Processor) Run() {
 
-	cfg := &interfaces.ProcessorConfig{Host: processor.Config.Net.Host, Port: processor.Config.Net.Port}
+	cfg := &interfaces.ProcessorConfig{Host: processor.Config.Net.External.Host, Port: processor.Config.Net.External.Port}
 
 	processor.Logger.SetColour(logging.Purple)
 
@@ -70,11 +70,11 @@ func (processor *Processor) Run() {
 	}
 
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT)
 
 	select {
 	case <-sigs:
-		fmt.Println("system sent SIGTERM signal")
+		fmt.Println("system sent SIGTERM or SIGINT signal")
 		processor.Interrupt <- common.Panic
 	case interrupt := <-processor.Interrupt:
 		switch interrupt {

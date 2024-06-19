@@ -10,8 +10,10 @@ import (
 func NewConfig(name string) *Config {
 	config := new(Config)
 	config.Name = name
-	config.Net.Host = "localhost"
-	config.Net.Port = 5023
+	config.Net.External.Host = "localhost"
+	config.Net.External.Port = 5023
+	config.Net.Internal.Host = "localhost"
+	config.Net.Internal.Port = 5023
 	config.Debug = true
 	return config
 }

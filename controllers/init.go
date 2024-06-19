@@ -49,14 +49,9 @@ func (cmd InitCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 			Name:    "a",
 			Debug:   true,
 			Timeout: 2,
-			Net: struct {
-				Host string `yaml:"host"`
-				Port int    `yaml:"port"`
-			}(struct {
-				Host string
-				Port int
-			}{Host: "localhost", Port: 5023}),
 		}
+		defaultConfig.Net.External = processor.NetworkConfig{Host: "localhost", Port: 5023}
+		defaultConfig.Net.Internal = processor.NetworkConfig{Host: "localhost", Port: 5023}
 
 		b, err := yaml.Marshal(defaultConfig)
 		if err != nil {

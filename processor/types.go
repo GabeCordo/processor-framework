@@ -29,6 +29,11 @@ func (module Module) ToString() string {
 	}
 }
 
+type NetworkConfig struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
 type Config struct {
 	Name           string  `yaml:"name"`
 	Debug          bool    `yaml:"debug"`
@@ -37,8 +42,8 @@ type Config struct {
 	Timeout        float64 `yaml:"timeout"`
 	Core           string  `yaml:"core"`
 	Net            struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		External NetworkConfig `yaml:"external"`
+		Internal NetworkConfig `yaml:"internal"`
 	} `yaml:"net"`
 }
 
@@ -72,7 +77,7 @@ func New(cfg *Config) (*Processor, error) {
 	httpConfig := &http.Config{
 		Debug:   cfg.Debug,
 		Timeout: cfg.Timeout,
-		Net:     fmt.Sprintf("%s:%d", cfg.Net.Host, cfg.Net.Port),
+		Net:     fmt.Sprintf("%s:%d", cfg.Net.Internal.Host, cfg.Net.Internal.Port),
 	}
 	httpLogger, err := logging.NewLogger(HttpProcessor.ToString(), &cfg.Debug)
 	if err != nil {
@@ -86,7 +91,7 @@ func New(cfg *Config) (*Processor, error) {
 		Timeout:    cfg.Timeout,
 		Standalone: cfg.StandaloneMode,
 		Core:       cfg.Core,
-		Processor:  interfaces.ProcessorConfig{Host: cfg.Net.Host, Port: cfg.Net.Port},
+		Processor:  interfaces.ProcessorConfig{Host: cfg.Net.External.Host, Port: cfg.Net.External.Port},
 	}
 	provisionerLogger, err := logging.NewLogger(Provisioner.ToString(), &processor.Config.Debug)
 	if err != nil {
