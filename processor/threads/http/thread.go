@@ -47,6 +47,7 @@ func (thread *Thread) Start() {
 	go func(thread *Thread) {
 		err := thread.server.ListenAndServe()
 		if err != nil {
+			thread.logger.Println("http thread failed to listen and serve")
 			thread.Interrupt <- common.Panic
 		}
 	}(thread)
@@ -73,6 +74,7 @@ func (thread *Thread) Teardown() {
 
 	err := thread.server.Shutdown(ctx)
 	if err != nil {
+		thread.logger.Println("teardown called; sending panic")
 		thread.Interrupt <- common.Panic
 	}
 }

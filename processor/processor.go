@@ -74,7 +74,7 @@ func (processor *Processor) Run() {
 
 	select {
 	case <-sigs:
-		fmt.Println()
+		fmt.Println("system sent SIGTERM signal")
 		processor.Interrupt <- common.Panic
 	case interrupt := <-processor.Interrupt:
 		switch interrupt {

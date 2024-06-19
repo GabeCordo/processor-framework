@@ -58,8 +58,13 @@ func (thread *Thread) Start() {
 		}
 	} else {
 
+		// logging enhancements
 		for _, moduleInst := range GetProvisionerInstance().GetModules() {
-			api.CreateModule(thread.Config.Core, &thread.Config.Processor, moduleInst.ToConfig())
+			if err := api.CreateModule(thread.Config.Core, &thread.Config.Processor, moduleInst.ToConfig()); err == nil {
+				thread.logger.Printf("registered module %s to core\n", moduleInst.Identifier)
+			} else {
+				thread.logger.Printf("failed to register module %s to core: %v\n", moduleInst.Identifier, err)
+			}
 		}
 	}
 
